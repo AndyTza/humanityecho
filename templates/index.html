@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Humanity's Echo</title>
+<style>
+/* ── Reset + Base ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:system-ui,-apple-system,sans-serif;color:#e2e8f0}
+/* ── Canvas ── */
+#cv{position:fixed;top:0;left:0;width:100%;height:100%;display:block;cursor:crosshair}
+/* ── HUD ── */
+.hud{position:fixed;background:rgba(2,4,14,.75);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:13px 17px;z-index:10}
+.hud-tl{top:20px;left:20px;min-width:150px}
+.hud-tr{top:20px;right:20px;min-width:180px;text-align:right}
+.hud-bl{bottom:20px;left:20px;display:flex;align-items:center;gap:14px;padding:9px 14px}
+.hl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:4px}
+.hv{font-family:'Courier New',monospace;font-size:14px;color:#e2e8f0;line-height:1.2}
+.hv-sm{font-size:11px;color:rgba(255,255,255,.4);margin-top:3px}
+.hv-xs{font-size:10px;color:rgba(255,255,255,.35)}
+/* ── Zoom ── */
+.zoom-row{display:flex;align-items:center;justify-content:flex-end;gap:6px;margin-top:11px}
+.zbtn{font-size:16px;color:rgba(255,255,255,.35);cursor:pointer;user-select:none;padding:0 2px}
+.zbtn:hover{color:rgba(255,255,255,.75)}
+#zslider{-webkit-appearance:none;width:105px;height:2px;border-radius:1px;background:rgba(255,255,255,.12);outline:none;cursor:pointer}
+#zslider::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:#60a5fa;cursor:pointer}
+#zslider::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:#60a5fa;border:none;cursor:pointer}
+.zhint{font-size:8px;color:rgba(255,255,255,.18);margin-top:5px;text-align:right}
+/* ── Legend ── */
+.li{display:flex;align-items:center;gap:6px;font-size:10px;color:rgba(255,255,255,.4)}
+.ld{width:9px;height:9px;border-radius:50%;border:1.5px solid;flex-shrink:0}
+.ld.r{border-color:#60a5fa}.ld.tv{border-color:#f97316}.ld.d{border-color:#a78bfa}.ld.s{background:#fbbf24;border-color:#fbbf24}
+/* ── Popup ── */
+#popup{position:fixed;top:50%;right:28px;transform:translateY(-50%);width:308px;background:rgba(4,6,20,.93);border:1px solid rgba(96,165,250,.18);border-radius:13px;padding:24px 22px 20px;z-index:50;transition:opacity .25s,transform .25s}
+#popup.hidden{opacity:0;pointer-events:none;transform:translateY(-50%) translateX(16px)}
+#pop-close{position:absolute;top:11px;right:11px;background:none;border:none;color:rgba(255,255,255,.25);font-size:14px;cursor:pointer;padding:4px 6px;border-radius:5px}
+#pop-close:hover{color:rgba(255,255,255,.7);background:rgba(255,255,255,.06)}
+#pop-badge{display:inline-block;font-size:8px;letter-spacing:2px;font-weight:600;padding:3px 8px;border-radius:20px;margin-bottom:9px;border:1px solid currentColor;opacity:.75}
+#pop-name{font-size:16px;font-weight:600;color:#f8fafc;line-height:1.3;margin-bottom:4px}
+#pop-meta{font-family:'Courier New',monospace;font-size:10px;color:rgba(255,255,255,.35);margin-bottom:11px}
+#pop-dist{font-family:'Courier New',monospace;font-size:12px;color:#93c5fd;background:rgba(96,165,250,.07);border-left:2px solid rgba(96,165,250,.35);padding:6px 10px;border-radius:0 5px 5px 0;margin-bottom:13px}
+#pop-desc{font-size:12px;line-height:1.65;color:rgba(255,255,255,.58);margin-bottom:16px}
+.aud-row{display:flex;align-items:center;gap:8px;font-size:11px;color:rgba(255,255,255,.35);margin-bottom:14px}
+.adot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.15);flex-shrink:0;transition:background .3s}
+.adot.on{background:#4ade80;box-shadow:0 0 6px #4ade80;animation:pdot 1.2s ease-in-out infinite}
+@keyframes pdot{0%,100%{opacity:1}50%{opacity:.4}}
+#pop-cite{display:inline-block;font-size:11px;color:rgba(96,165,250,.65);text-decoration:none;border:1px solid rgba(96,165,250,.18);padding:5px 12px;border-radius:6px}
+#pop-cite:hover{color:#93c5fd;border-color:rgba(96,165,250,.45);background:rgba(96,165,250,.06)}
+#pop-cite.hid{display:none}
+/* ── Loading ── */
+#ls{position:fixed;top:0;left:0;width:100%;height:100%;background:#000010;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;transition:opacity .9s}
+#ls.out{opacity:0;pointer-events:none}
+.lt{font-family:'Courier New',monospace;font-size:12px;letter-spacing:7px;color:rgba(255,255,255,.4);margin-bottom:12px}
+.ls{font-size:11px;color:rgba(255,255,255,.2)}
+/* ── Error banner ── */
+#err{display:none;position:fixed;top:10px;left:10px;right:10px;background:rgba(180,0,0,.85);color:#fff;padding:11px 15px;border-radius:8px;font:12px 'Courier New',monospace;z-index:9999;white-space:pre-wrap}
+</style>
+</head>
+<body>
+<div id="err"></div>
+<canvas id="cv"></canvas>
+
+<!-- HUD top-left: clock -->
+<div class="hud hud-tl">
+  <div class="hl">EARTH DATE</div>
+  <div id="hdate" class="hv">—</div>
+  <div id="htime" class="hv hv-sm">—</div>
+</div>
+
+<!-- HUD top-right: zoom -->
+<div class="hud hud-tr">
+  <div class="hl">LIGHT RADIUS</div>
+  <div id="hradius" class="hv">—</div>
+  <div class="hl" style="margin-top:8px">SCALE</div>
+  <div id="hscale" class="hv hv-xs">—</div>
+  <div class="zoom-row">
+    <span class="zbtn" id="zmout">−</span>
+    <input type="range" id="zslider" min="0" max="100" value="35">
+    <span class="zbtn" id="zmin">+</span>
+  </div>
+  <div class="zhint">scroll or drag to zoom</div>
+</div>
+
+<!-- HUD bottom-left: legend -->
+<div class="hud hud-bl">
+  <div class="li"><span class="ld r"></span>Radio</div>
+  <div class="li"><span class="ld tv"></span>Television</div>
+  <div class="li"><span class="ld d"></span>Directed</div>
+  <div class="li"><span class="ld s"></span>Spacecraft</div>
+</div>
+
+<!-- Popup -->
+<div id="popup" class="hidden">
+  <button id="pop-close">✕</button>
+  <div id="pop-badge"></div>
+  <div id="pop-name"></div>
+  <div id="pop-meta"></div>
+  <div id="pop-dist"></div>
+  <div id="pop-desc"></div>
+  <div class="aud-row"><span class="adot" id="adot"></span><span id="albl">No audio</span></div>
+  <a id="pop-cite" class="hid" href="#" target="_blank" rel="noopener">View source ↗</a>
+</div>
+
+<!-- Loading screen -->
+<div id="ls">
+  <div class="lt">HUMANITY'S ECHO</div>
+  <div class="ls" id="lsub">Initializing…</div>
+</div>
+
+<script>
+'use strict';
+
+// ── Error visibility ──────────────────────────────────────────────────────────
+window.onerror = function(msg, src, line, col, err) {
+  var b = document.getElementById('err');
+  if (b) { b.style.display = 'block'; b.textContent = 'Error: ' + msg + '\n' + src + ':' + line; }
+};
+window.addEventListener('unhandledrejection', function(e) {
+  var b = document.getElementById('err');
+  if (b) { b.style.display = 'block'; b.textContent = 'Promise error: ' + e.reason; }
+});
+
+// ── Physics ───────────────────────────────────────────────────────────────────
+var MS_PER_YEAR = 365.25 * 24 * 3600 * 1000;
+var AU_PER_LY   = 63241.077;
+var LY_MIN = 0.005, LY_MAX = 130000;
+
+function Physics() { this._vp = 300; }
+Physics.prototype = {
+  get viewportLY()   { return this._vp; },
+  pixelsPerLY: function(w) { return w / this._vp; },
+  setViewportLY: function(ly) { this._vp = Math.max(LY_MIN, Math.min(LY_MAX, ly)); },
+  zoomByDelta: function(d) { this.setViewportLY(this._vp * Math.pow(1.0012, d)); },
+  sliderToLY: function(v) {
+    var a = Math.log10(LY_MAX), b = Math.log10(LY_MIN);
+    return Math.pow(10, a - (v / 100) * (a - b));
+  },
+  lyToSlider: function(ly) {
+    var a = Math.log10(LY_MAX), b = Math.log10(LY_MIN);
+    return ((a - Math.log10(Math.max(LY_MIN, Math.min(LY_MAX, ly)))) / (a - b)) * 100;
+  },
+  signalAgeLY: function(yr, mo, dy, now) {
+    var d = new Date(yr, (mo || 1) - 1, dy || 1);
+    return Math.max(0, (now - d) / MS_PER_YEAR);
+  },
+  auToLY: function(au) { return au / AU_PER_LY; },
+  formatLY: function(ly) {
+    if (ly < 0.0001) return (ly * AU_PER_LY).toFixed(1) + ' AU';
+    if (ly < 1)      return ly.toFixed(4) + ' LY';
+    if (ly < 1000)   return ly.toFixed(2) + ' LY';
+    return (ly / 1000).toFixed(2) + ' kLY';
+  }
+};
+
+// ── Audio ─────────────────────────────────────────────────────────────────────
+function AudioEngine() {
+  this._ctx = null; this._src = null; this._gain = null;
+  this.playing = false; this.onError = null;
+  this.FADE_IN = 0.5; this.FADE_OUT = 0.4;
+  this._cache = {};
+}
+AudioEngine.prototype = {
+  _init: function() {
+    if (!this._ctx) this._ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (this._ctx.state === 'suspended') this._ctx.resume();
+  },
+  play: function(file) {
+    var self = this;
+    self._init();
+    self.stop();
+    if (!file) { self.playing = false; return; }
+    var url = '/audio/' + file;
+    var load = self._cache[url]
+      ? Promise.resolve(self._cache[url])
+      : fetch(url).then(function(r) {
+          if (!r.ok) throw new Error('Audio ' + r.status);
+          return r.arrayBuffer();
+        }).then(function(ab) { return self._ctx.decodeAudioData(ab); })
+          .then(function(buf) { self._cache[url] = buf; return buf; });
+
+    load.then(function(buf) {
+      var offset = Math.random() * buf.duration * 0.7;
+      self._gain = self._ctx.createGain();
+      self._gain.gain.setValueAtTime(0, self._ctx.currentTime);
+      self._gain.gain.linearRampToValueAtTime(0.8, self._ctx.currentTime + self.FADE_IN);
+      var flt = self._ctx.createBiquadFilter();
+      flt.type = 'bandpass'; flt.frequency.value = 1800; flt.Q.value = 0.75;
+      self._src = self._ctx.createBufferSource();
+      self._src.buffer = buf; self._src.loop = true;
+      self._src.connect(flt); flt.connect(self._gain); self._gain.connect(self._ctx.destination);
+      self._src.start(0, offset);
+      self.playing = true;
+    }).catch(function(e) {
+      self.playing = false;
+      if (self.onError) self.onError(e.message);
+    });
+  },
+  stop: function() {
+    if (this._gain && this._ctx) {
+      var t = this._ctx.currentTime;
+      this._gain.gain.setValueAtTime(this._gain.gain.value, t);
+      this._gain.gain.linearRampToValueAtTime(0, t + this.FADE_OUT);
+    }
+    if (this._src) {
+      var s = this._src; this._src = null;
+      setTimeout(function() { try { s.stop(); } catch(e) {} }, (this.FADE_OUT + 0.1) * 1000);
+    }
+    this.playing = false;
+  }
+};
+
+// ── Renderer ──────────────────────────────────────────────────────────────────
+var TC = { radio:'#60a5fa', tv:'#f97316', directed:'#a78bfa', optical:'#34d399', spacecraft:'#fbbf24', other:'#94a3b8' };
+
+function hex2rgb(hex, a) {
+  var m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!m) return 'rgba(150,150,150,' + a + ')';
+  return 'rgba(' + parseInt(m[1],16) + ',' + parseInt(m[2],16) + ',' + parseInt(m[3],16) + ',' + a + ')';
+}
+
+function Renderer(cv, ctx) {
+  this.cv = cv; this.ctx = ctx;
+  this._stars = []; this._pulse = 0;
+  this._mkStars(700);
+}
+Renderer.prototype = {
+  _mkStars: function(n) {
+    var w = this.cv.width, h = this.cv.height, a = [];
+    for (var i = 0; i < n; i++) {
+      var ang = Math.random() * Math.PI * 2;
+      var r   = Math.pow(Math.random(), 0.45) * Math.max(w, h) * 0.65;
+      a.push({ x: w/2 + Math.cos(ang)*r, y: h/2 + Math.sin(ang)*r,
+               sz: Math.random()*1.4+0.2, base: Math.random()*0.6+0.15,
+               sp: Math.random()*0.5+0.1, ph: Math.random()*Math.PI*2 });
+    }
+    this._stars = a;
+  },
+  regenerateStars: function() { this._mkStars(700); },
+  drawBackground: function() {
+    var c = this.ctx, w = this.cv.width, h = this.cv.height;
+    c.fillStyle = '#00000a'; c.fillRect(0, 0, w, h);
+    var g = c.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w,h)*0.5);
+    g.addColorStop(0,   'rgba(25,15,55,.2)');
+    g.addColorStop(0.4, 'rgba(12,8,28,.1)');
+    g.addColorStop(1,   'rgba(0,0,0,0)');
+    c.fillStyle = g; c.fillRect(0, 0, w, h);
+  },
+  drawStars: function(t) {
+    var c = this.ctx;
+    for (var i = 0; i < this._stars.length; i++) {
+      var s = this._stars[i];
+      var al = Math.max(0.04, s.base + Math.sin(t * s.sp + s.ph) * 0.12);
+      c.beginPath(); c.arc(s.x, s.y, s.sz, 0, Math.PI*2);
+      c.fillStyle = 'rgba(210,225,255,' + al.toFixed(3) + ')'; c.fill();
+    }
+  },
+  drawEarth: function(cx, cy) {
+    var c = this.ctx;
+    this._pulse = (this._pulse + 0.012) % (Math.PI * 2);
+    var r = 6 + Math.sin(this._pulse) * 1.2;
+    for (var i = 4; i >= 1; i--) {
+      c.beginPath(); c.arc(cx, cy, r + i*7, 0, Math.PI*2);
+      c.strokeStyle = 'rgba(59,130,246,' + 0.04*i + ')';
+      c.lineWidth = 9; c.stroke();
+    }
+    var g = c.createRadialGradient(cx-1.5, cy-1.5, 0, cx, cy, r);
+    g.addColorStop(0, '#bfdbfe'); g.addColorStop(0.4, '#3b82f6'); g.addColorStop(1, '#1e3a8a');
+    c.beginPath(); c.arc(cx, cy, r, 0, Math.PI*2); c.fillStyle = g; c.fill();
+    c.fillStyle = 'rgba(191,219,254,.4)';
+    c.font = '9px "Courier New",monospace'; c.textAlign = 'center';
+    c.fillText('EARTH', cx, cy + r + 15);
+  },
+  drawSignalCircle: function(cx, cy, rPx, sig, hov) {
+    if (rPx < 0.5) return;
+    var diag = Math.sqrt(this.cv.width*this.cv.width + this.cv.height*this.cv.height);
+    if (rPx > diag * 3) return;
+    var c = this.ctx, col = sig.color || TC[sig.type] || TC.other;
+    var lw = hov ? 2.5 : 1.5, al = hov ? 0.85 : 0.45, gl = hov ? 0.18 : 0.06;
+    for (var i = 3; i >= 1; i--) {
+      c.beginPath(); c.arc(cx, cy, rPx, 0, Math.PI*2);
+      c.strokeStyle = hex2rgb(col, gl*(4-i)/3); c.lineWidth = lw + i*5; c.stroke();
+    }
+    c.beginPath(); c.arc(cx, cy, rPx, 0, Math.PI*2);
+    c.strokeStyle = hex2rgb(col, al); c.lineWidth = lw; c.stroke();
+    if (hov) {
+      var ly = Math.max(18, cy - rPx - 10);
+      c.shadowColor = 'rgba(0,0,0,.8)'; c.shadowBlur = 6;
+      c.font = '600 11px system-ui,sans-serif'; c.textAlign = 'center';
+      c.fillStyle = hex2rgb(col, 0.95);
+      c.fillText(sig.name, cx, ly);
+      c.shadowBlur = 0; c.shadowColor = 'transparent';
+    }
+  },
+  drawSpacecraft: function(cx, cy, dPx, craft, hov) {
+    if (dPx < 0.5) return;
+    var c = this.ctx, ang = ((craft.direction_deg || 0) - 90) * Math.PI / 180;
+    var x = cx + Math.cos(ang)*dPx, y = cy + Math.sin(ang)*dPx;
+    if (x < -30 || x > this.cv.width+30 || y < -30 || y > this.cv.height+30) return;
+    var col = craft.color || '#fbbf24', r = hov ? 5 : 3;
+    c.beginPath(); c.arc(x, y, r+4, 0, Math.PI*2); c.fillStyle = hex2rgb(col, 0.12); c.fill();
+    c.beginPath(); c.arc(x, y, r, 0, Math.PI*2); c.fillStyle = col; c.fill();
+    if (hov || dPx > 30) {
+      c.shadowColor = 'rgba(0,0,0,.8)'; c.shadowBlur = 5;
+      c.font = '10px system-ui,sans-serif'; c.textAlign = 'center';
+      c.fillStyle = hex2rgb(col, 0.85); c.fillText(craft.name, x, y - r - 7);
+      c.shadowBlur = 0; c.shadowColor = 'transparent';
+    }
+  }
+};
+
+// ── SignalManager ─────────────────────────────────────────────────────────────
+var HOVER_PX = 9;
+function SignalManager(phy) {
+  this.phy = phy; this.signals = []; this.spacecraft = [];
+  this.hoveredSignal = null; this.hoveredCraft = null;
+}
+SignalManager.prototype = {
+  loadSignals:    function(d) { this.signals    = d.signals    || []; },
+  loadSpacecraft: function(d) { this.spacecraft = d.spacecraft || []; },
+  craftDistanceAU: function(craft, now) {
+    var launch = new Date(craft.launched_year, (craft.launched_month||1)-1, craft.launched_day||1);
+    var yrs = Math.max(0, (now - launch) / MS_PER_YEAR);
+    return yrs * (craft.speed_au_per_year || 3.5);
+  },
+  isSpacecraft: function(item) { return !!item && 'launched_year' in item; },
+  getHoveredItem: function() { return this.hoveredSignal || this.hoveredCraft || null; },
+  updateHover: function(mx, my, cx, cy, cw, now) {
+    var pxLY = this.phy.pixelsPerLY(cw), best = Infinity;
+    this.hoveredSignal = null; this.hoveredCraft = null;
+    var i, sig, rPx, dx, dy, dist, diff;
+    for (i = 0; i < this.signals.length; i++) {
+      sig  = this.signals[i];
+      rPx  = this.phy.signalAgeLY(sig.year, sig.month, sig.day, now) * pxLY;
+      if (rPx < 0.5) continue;
+      dx = mx-cx; dy = my-cy; dist = Math.sqrt(dx*dx+dy*dy);
+      diff = Math.abs(dist - rPx);
+      if (diff < HOVER_PX && diff < best) { best = diff; this.hoveredSignal = sig; this.hoveredCraft = null; }
+    }
+    var craft, ang, sx, sy;
+    for (i = 0; i < this.spacecraft.length; i++) {
+      craft = this.spacecraft[i];
+      dist  = this.phy.auToLY(this.craftDistanceAU(craft, now)) * pxLY;
+      ang   = ((craft.direction_deg||0) - 90) * Math.PI / 180;
+      sx = cx + Math.cos(ang)*dist; sy = cy + Math.sin(ang)*dist;
+      dx = mx-sx; dy = my-sy; diff = Math.sqrt(dx*dx+dy*dy);
+      if (diff < 15 && diff < best) { best = diff; this.hoveredCraft = craft; this.hoveredSignal = null; }
+    }
+  }
+};
+
+// ── UI ────────────────────────────────────────────────────────────────────────
+var TYPE_LABELS = { radio:'RADIO BROADCAST', tv:'TELEVISION BROADCAST', directed:'DIRECTED SIGNAL', optical:'OPTICAL SIGNAL', spacecraft:'SPACECRAFT', other:'SIGNAL' };
+var TYPE_CSS    = { radio:'#60a5fa', tv:'#f97316', directed:'#a78bfa', optical:'#34d399', spacecraft:'#fbbf24', other:'#94a3b8' };
+
+function UI(phy, sm) { this.phy = phy; this.sm = sm; this._locked = null; this._init(); }
+UI.prototype = {
+  _init: function() {
+    var self = this, sl = document.getElementById('zslider');
+    sl.value = this.phy.lyToSlider(this.phy.viewportLY);
+    sl.addEventListener('input', function() { self.phy.setViewportLY(self.phy.sliderToLY(+sl.value)); });
+    document.getElementById('zmout').addEventListener('click', function() { self.phy.setViewportLY(self.phy.viewportLY * 2); self.syncSlider(); });
+    document.getElementById('zmin').addEventListener('click',  function() { self.phy.setViewportLY(self.phy.viewportLY / 2); self.syncSlider(); });
+    document.getElementById('pop-close').addEventListener('click', function() { self.closePopup(); });
+  },
+  syncSlider: function() { document.getElementById('zslider').value = this.phy.lyToSlider(this.phy.viewportLY); },
+  updateClock: function(now) {
+    document.getElementById('hdate').textContent = now.toLocaleDateString('en-US', {year:'numeric',month:'short',day:'numeric'});
+    document.getElementById('htime').textContent = now.toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  },
+  updateZoomHUD: function(cw) {
+    var pxLY = this.phy.pixelsPerLY(cw);
+    document.getElementById('hradius').textContent = this.phy.formatLY(this.phy.viewportLY / 2);
+    document.getElementById('hscale').textContent  = '1 px = ' + this.phy.formatLY(1 / pxLY);
+  },
+  showPopup: function(item, now) {
+    this._locked = item;
+    var iscraft = this.sm.isSpacecraft(item);
+    var type  = iscraft ? 'spacecraft' : (item.type || 'other');
+    var color = item.color || TYPE_CSS[type] || TYPE_CSS.other;
+    var badge = document.getElementById('pop-badge');
+    badge.textContent = TYPE_LABELS[type] || 'SIGNAL';
+    badge.style.color = color; badge.style.borderColor = color;
+    document.getElementById('pop-name').textContent = item.name;
+    if (iscraft) {
+      var dl = new Date(item.launched_year, (item.launched_month||1)-1, item.launched_day||1);
+      document.getElementById('pop-meta').textContent = 'Launched: ' + dl.toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});
+      var au = this.sm.craftDistanceAU(item, now), ly = this.phy.auToLY(au);
+      document.getElementById('pop-dist').textContent = au.toFixed(1) + ' AU  ·  ' + this.phy.formatLY(ly) + ' from Earth';
+    } else {
+      var ds = new Date(item.year, (item.month||1)-1, item.day||1);
+      document.getElementById('pop-meta').textContent = 'Transmitted: ' + ds.toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});
+      document.getElementById('pop-dist').textContent = this.phy.formatLY(this.phy.signalAgeLY(item.year, item.month, item.day, now)) + ' from Earth';
+    }
+    document.getElementById('pop-desc').textContent = item.description || '';
+    var dot = document.getElementById('adot'), lbl = document.getElementById('albl');
+    if (item.audio_file) { dot.className = 'adot on'; lbl.textContent = 'Sampling signal…'; }
+    else                 { dot.className = 'adot';    lbl.textContent = 'No audio available'; }
+    var cite = document.getElementById('pop-cite');
+    if (item.citation_url) { cite.href = item.citation_url; cite.classList.remove('hid'); }
+    else                   { cite.classList.add('hid'); }
+    document.getElementById('popup').classList.remove('hidden');
+  },
+  closePopup: function() {
+    this._locked = null;
+    document.getElementById('popup').classList.add('hidden');
+    document.getElementById('adot').className = 'adot';
+  },
+  isPopupOpen:   function() { return !document.getElementById('popup').classList.contains('hidden'); },
+  getLockedItem: function() { return this._locked; },
+  updatePopupDistance: function(now) {
+    if (!this._locked) return;
+    var item = this._locked, iscraft = this.sm.isSpacecraft(item);
+    var el = document.getElementById('pop-dist');
+    if (iscraft) {
+      var au = this.sm.craftDistanceAU(item, now), ly = this.phy.auToLY(au);
+      el.textContent = au.toFixed(1) + ' AU  ·  ' + this.phy.formatLY(ly) + ' from Earth';
+    } else {
+      el.textContent = this.phy.formatLY(this.phy.signalAgeLY(item.year, item.month, item.day, now)) + ' from Earth';
+    }
+  }
+};
+
+// ── Main ──────────────────────────────────────────────────────────────────────
+var cv      = document.getElementById('cv');
+var ctx     = cv.getContext('2d');
+var phy     = new Physics();
+var audio   = new AudioEngine();
+var ren     = new Renderer(cv, ctx);
+var sm      = new SignalManager(phy);
+var ui      = new UI(phy, sm);
+var mx = -9999, my = -9999;
+
+audio.onError = function() {
+  document.getElementById('adot').className = 'adot';
+  document.getElementById('albl').textContent = 'Audio not found in audio/ folder';
+};
+
+function resize() {
+  cv.width  = window.innerWidth;
+  cv.height = window.innerHeight;
+  ren.regenerateStars();
+}
+window.addEventListener('resize', resize);
+resize();
+
+cv.addEventListener('mousemove', function(e) { mx = e.clientX; my = e.clientY; });
+cv.addEventListener('click', function() {
+  var item = sm.getHoveredItem();
+  if (item) { ui.showPopup(item, new Date()); audio.play(item.audio_file); }
+  else if (ui.isPopupOpen()) { ui.closePopup(); audio.stop(); }
+});
+cv.addEventListener('wheel', function(e) {
+  e.preventDefault(); phy.zoomByDelta(e.deltaY); ui.syncSlider();
+}, { passive: false });
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && ui.isPopupOpen()) { ui.closePopup(); audio.stop(); }
+});
+
+function loop(ts) {
+  var now = new Date(), t = ts / 1000;
+  var cx = cv.width/2, cy = cv.height/2, pxLY = phy.pixelsPerLY(cv.width);
+  ren.drawBackground();
+  ren.drawStars(t);
+  var sigs = sm.signals.slice().sort(function(a,b){return a.year-b.year;});
+  for (var i = 0; i < sigs.length; i++) {
+    var s = sigs[i], r = phy.signalAgeLY(s.year, s.month, s.day, now) * pxLY;
+    ren.drawSignalCircle(cx, cy, r, s, sm.hoveredSignal === s);
+  }
+  for (var j = 0; j < sm.spacecraft.length; j++) {
+    var cr = sm.spacecraft[j], dp = phy.auToLY(sm.craftDistanceAU(cr, now)) * pxLY;
+    ren.drawSpacecraft(cx, cy, dp, cr, sm.hoveredCraft === cr);
+  }
+  ren.drawEarth(cx, cy);
+  if (!ui.isPopupOpen()) sm.updateHover(mx, my, cx, cy, cv.width, now);
+  cv.style.cursor = sm.getHoveredItem() ? 'pointer' : 'crosshair';
+  ui.updateClock(now);
+  ui.updateZoomHUD(cv.width);
+  if (ui.isPopupOpen()) ui.updatePopupDistance(now);
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+function setLsub(t) { var e = document.getElementById('lsub'); if (e) e.textContent = t; }
+function fadeLS() {
+  var e = document.getElementById('ls'); if (!e) return;
+  e.classList.add('out');
+  setTimeout(function() { if (e.parentNode) e.parentNode.removeChild(e); }, 1000);
+}
+
+setLsub('Fetching signal data…');
+Promise.all([
+  fetch('/api/signals').then(function(r){ if(!r.ok) throw new Error('/api/signals '+r.status); return r.json(); }),
+  fetch('/api/spacecraft').then(function(r){ if(!r.ok) throw new Error('/api/spacecraft '+r.status); return r.json(); })
+]).then(function(res) {
+  sm.loadSignals(res[0]); sm.loadSpacecraft(res[1]);
+  setLsub('Loaded ' + sm.signals.length + ' signals · ' + sm.spacecraft.length + ' spacecraft');
+  setTimeout(fadeLS, 600);
+}).catch(function(err) {
+  setLsub('⚠  ' + err.message + '  — is python app.py running?');
+  setTimeout(fadeLS, 5000);
+});
+</script>
+</body>
+</html>

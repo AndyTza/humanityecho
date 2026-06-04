@@ -1,0 +1,135 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# signals.yaml — Humanity's Echo
+#
+# Each entry is a signal (radio, TV, or directed) that leaked into space.
+# The circle radius is automatically computed as: (current_year - year) LY
+#
+# Fields:
+#   id           – unique snake_case identifier
+#   name         – display name (keep concise)
+#   description  – shown in popup (a sentence or two)
+#   year         – year transmitted (required)
+#   month        – month transmitted (optional, default 1)
+#   day          – day transmitted (optional, default 1)
+#   type         – radio | tv | directed | optical | other
+#   audio_file   – filename inside /audio/ folder (null if none)
+#   citation_url – source URL shown in popup
+#   color        – hex override (optional; defaults by type)
+# ─────────────────────────────────────────────────────────────────────────────
+
+signals:
+
+  - id: WAAM_1928
+    name: "WAAM September 11, 1928"
+    description: >
+      WAAM in New York City broadcasts the first radio program
+      specifically for children. This pioneering effort sends
+      a wave of creativity into the cosmos.
+    year: 1928
+    month: 9
+    day: 11
+    type: radio
+    audio_file: "09111928_WAAM.mp3"
+    citation_url: "https://archive.org/details/waam-september-11-1928"
+    color: "#60a5fa"
+
+  - id: marconi_1895
+    name: "Marconi's First Radio Transmission"
+    description: >
+      Guglielmo Marconi transmits the first radio signal across a field
+      in Bologna, Italy — humanity's first accidental whisper into the cosmos.
+      This invisible ripple has now traveled over 130 light-years into space.
+    year: 1895
+    month: 12
+    day: 1
+    type: radio
+    audio_file: null
+    citation_url: "https://www.britannica.com/biography/Guglielmo-Marconi"
+    color: "#60a5fa"
+
+  - id: kdka_1920
+    name: "KDKA — First Commercial Broadcast"
+    description: >
+      KDKA in Pittsburgh, Pennsylvania becomes the world's first commercial
+      radio station, broadcasting election returns. Millions of radios would
+      follow — each leaking signals into the cosmos.
+    year: 1920
+    month: 11
+    day: 2
+    type: radio
+    audio_file: null
+    citation_url: "https://www.fcc.gov/media/radio/history-of-broadcasting"
+    color: "#60a5fa"
+
+  - id: olympics_1936
+    name: "Berlin Olympics — First Major TV Broadcast"
+    description: >
+      The 1936 Berlin Olympics is the first event broadcast live on
+      television to public viewing rooms across the city. This is widely
+      considered the first strong television signal to escape Earth's atmosphere.
+    year: 1936
+    month: 8
+    day: 1
+    type: tv
+    audio_file: null
+    citation_url: "https://www.olympic.org/berlin-1936"
+    color: "#f97316"
+
+  - id: vj_day_1945
+    name: "V-J Day Radio Announcement"
+    description: >
+      President Truman announces Japan's surrender, ending World War II.
+      Radio stations across the globe broadcast simultaneously — an
+      unprecedented pulse of human joy radiating into the galaxy.
+    year: 1945
+    month: 8
+    day: 15
+    type: radio
+    audio_file: null
+    citation_url: "https://www.history.com/topics/world-war-ii/v-j-day"
+    color: "#60a5fa"
+
+  - id: apollo_11_1969
+    name: "Apollo 11 — One Small Step"
+    description: >
+      Neil Armstrong becomes the first human to walk on the Moon.
+      His words — "That's one small step for man, one giant leap for mankind"
+      — were broadcast to 600 million people on Earth, and now travel forever
+      into the galaxy.
+    year: 1969
+    month: 7
+    day: 20
+    type: tv
+    audio_file: null
+    citation_url: "https://www.nasa.gov/mission/apollo-11/"
+    color: "#f97316"
+
+  - id: arecibo_1974
+    name: "Arecibo Message"
+    description: >
+      The first deliberate, high-powered radio message aimed at the stars.
+      Transmitted toward globular cluster M13 (25,000 light-years away) from
+      Arecibo Observatory, Puerto Rico. It encoded a pixelated image of a human,
+      our solar system, and the structure of DNA.
+    year: 1974
+    month: 11
+    day: 16
+    type: directed
+    audio_file: null
+    citation_url: "https://www.seti.org/seti-institute/project/details/arecibo-message"
+    color: "#a78bfa"
+
+  - id: pale_blue_dot_1990
+    name: "Pale Blue Dot Photograph"
+    description: >
+      Voyager 1, at 6 billion km from Earth, is commanded to turn its camera
+      back and photograph our planet. The resulting image — a pale blue dot
+      in a vast dark ocean — becomes one of the most profound images ever made.
+      Carl Sagan's famous reflection on it was broadcast worldwide.
+    year: 1990
+    month: 2
+    day: 14
+    type: other
+    audio_file: null
+    citation_url: "https://www.planetary.org/worlds/pale-blue-dot"
+    color: "#94a3b8"

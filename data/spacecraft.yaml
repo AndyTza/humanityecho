@@ -1,0 +1,82 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# spacecraft.yaml — Humanity's Echo
+#
+# Physical objects humanity has sent into space.
+# Distance is computed from launch date × average outward speed.
+#
+# Fields:
+#   id                – unique snake_case identifier
+#   name              – display name
+#   description       – shown in popup
+#   launched_year     – launch year
+#   launched_month    – launch month (optional)
+#   launched_day      – launch day (optional)
+#   speed_au_per_year – average outward speed in AU/year
+#   direction_deg     – heading on the 2D canvas (degrees, 0 = up/north)
+#   audio_file        – filename inside /audio/ (null if none)
+#   citation_url      – source URL
+#   color             – hex color (default gold)
+# ─────────────────────────────────────────────────────────────────────────────
+
+spacecraft:
+
+  - id: pioneer_10
+    name: "Pioneer 10"
+    description: >
+      The first spacecraft to traverse the asteroid belt and make direct
+      observations of Jupiter. Pioneer 10 carries a golden plaque — humanity's
+      first physical message to the cosmos. Last contact: January 2003.
+    launched_year: 1972
+    launched_month: 3
+    launched_day: 2
+    speed_au_per_year: 2.543
+    direction_deg: 55
+    audio_file: null
+    citation_url: "https://solarsystem.nasa.gov/missions/pioneer-10/in-depth/"
+    color: "#fb923c"
+
+  - id: pioneer_11
+    name: "Pioneer 11"
+    description: >
+      The first spacecraft to study Saturn up close, revealing new moons and
+      ring structure. Carries an identical golden plaque to Pioneer 10.
+      Last contact: November 1995.
+    launched_year: 1973
+    launched_month: 4
+    launched_day: 5
+    speed_au_per_year: 2.433
+    direction_deg: 140
+    audio_file: null
+    citation_url: "https://solarsystem.nasa.gov/missions/pioneer-11/in-depth/"
+    color: "#fb923c"
+
+  - id: voyager_2
+    name: "Voyager 2"
+    description: >
+      The only spacecraft to visit all four outer planets. Launched before
+      Voyager 1 but on a slower trajectory, Voyager 2 entered interstellar
+      space in November 2018. It carries the Golden Record.
+    launched_year: 1977
+    launched_month: 8
+    launched_day: 20
+    speed_au_per_year: 3.254
+    direction_deg: 205
+    audio_file: null
+    citation_url: "https://voyager.jpl.nasa.gov"
+    color: "#fbbf24"
+
+  - id: voyager_1
+    name: "Voyager 1"
+    description: >
+      The farthest human-made object from Earth. Launched in 1977, Voyager 1
+      crossed into interstellar space in August 2012 and continues outward
+      at ~17 km/s. It carries the Golden Record — a message to any
+      civilization that might find it.
+    launched_year: 1977
+    launched_month: 9
+    launched_day: 5
+    speed_au_per_year: 3.599
+    direction_deg: 312
+    audio_file: null
+    citation_url: "https://voyager.jpl.nasa.gov"
+    color: "#fbbf24"

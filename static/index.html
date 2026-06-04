@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Humanity's Echo</title>
+
+  <!-- Critical inline CSS — black background guaranteed before any file loads -->
+  <style>
+    html, body { margin: 0; padding: 0; background: #000; overflow: hidden; height: 100%; width: 100%; }
+    #main-canvas { position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: block; cursor: crosshair; }
+    #loading-screen {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: #000010; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; z-index: 999;
+      transition: opacity 0.9s ease; font-family: monospace; color: #fff;
+    }
+    #loading-screen.fade-out { opacity: 0; pointer-events: none; }
+    #loading-error {
+      display: none; position: fixed; top: 10px; left: 10px; right: 10px;
+      background: rgba(180,0,0,0.85); color: #fff; padding: 12px 16px;
+      border-radius: 8px; font: 12px monospace; z-index: 9999; white-space: pre-wrap;
+    }
+  </style>
+
+  <!-- External stylesheet (enhances, doesn't break if slow) -->
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet" media="print" onload="this.media='all'">
+</head>
+<body>
+
+  <!-- Visible error banner (populated by window.onerror) -->
+  <div id="loading-error"></div>
+
+  <!-- Main canvas -->
+  <canvas id="main-canvas"></canvas>
+
+  <!-- ── HUD: Top Left — Clock ──────────────────────────────────────────── -->
+  <div class="hud-panel hud-tl">
+    <div class="hud-label">EARTH DATE</div>
+    <div id="hud-date" class="hud-value">—</div>
+    <div id="hud-time" class="hud-value hud-time-small">—</div>
+  </div>
+
+  <!-- ── HUD: Top Right — Zoom / Scale ─────────────────────────────────── -->
+  <div class="hud-panel hud-tr">
+    <div class="hud-label">LIGHT RADIUS</div>
+    <div id="hud-radius" class="hud-value">—</div>
+    <div class="hud-label" style="margin-top:8px">SCALE</div>
+    <div id="hud-scale" class="hud-value hud-value-sm">—</div>
+    <div class="zoom-row">
+      <span class="zoom-btn" id="zoom-out-btn" title="Zoom out">−</span>
+      <input type="range" id="zoom-slider" min="0" max="100" value="35">
+      <span class="zoom-btn" id="zoom-in-btn" title="Zoom in">+</span>
+    </div>
+    <div class="hud-hint">scroll or drag to zoom</div>
+  </div>
+
+  <!-- ── HUD: Bottom Left — Legend ─────────────────────────────────────── -->
+  <div class="hud-panel hud-bl" id="hud-legend">
+    <div class="legend-item"><span class="ldot radio"></span>Radio</div>
+    <div class="legend-item"><span class="ldot tv"></span>Television</div>
+    <div class="legend-item"><span class="ldot directed"></span>Directed Signal</div>
+    <div class="legend-item"><span class="ldot spacecraft"></span>Spacecraft</div>
+  </div>
+
+  <!-- ── Signal / Spacecraft Popup ─────────────────────────────────────── -->
+  <div id="popup" class="popup hidden">
+    <button id="popup-close" class="popup-close" aria-label="Close">✕</button>
+    <div id="popup-type-badge" class="popup-type-badge"></div>
+    <div id="popup-name" class="popup-name"></div>
+    <div id="popup-meta" class="popup-meta"></div>
+    <div id="popup-distance" class="popup-distance"></div>
+    <div id="popup-desc" class="popup-desc"></div>
+    <div class="popup-audio-row" id="popup-audio-row">
+      <span class="audio-dot" id="audio-dot"></span>
+      <span id="popup-audio-label">No audio available</span>
+    </div>
+    <a id="popup-citation" class="popup-citation" href="#" target="_blank" rel="noopener noreferrer">
+      View source ↗
+    </a>
+  </div>
+
+  <!-- ── Loading overlay ───────────────────────────────────────────────── -->
+  <div id="loading-screen">
+    <div class="loading-title">HUMANITY'S ECHO</div>
+    <div id="loading-sub" class="loading-sub">Initializing…</div>
+  </div>
+
+  <!-- Scripts: physics → audio → renderer → signals → ui → main -->
+  <script src="/static/js/physics.js"></script>
+  <script src="/static/js/audio.js"></script>
+  <script src="/static/js/renderer.js"></script>
+  <script src="/static/js/signals.js"></script>
+  <script src="/static/js/ui.js"></script>
+  <script src="/static/js/main.js"></script>
+</body>
+</html>

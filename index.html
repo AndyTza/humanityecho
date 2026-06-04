@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Humanity's Echo</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:system-ui,-apple-system,sans-serif;color:#e2e8f0}
+#cv{position:fixed;top:0;left:0;width:100%;height:100%;display:block;cursor:crosshair}
+
+/* HUD panels */
+.hud{position:fixed;background:rgba(2,4,18,.82);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:24px 30px;z-index:10}
+.hud-tl{top:28px;left:28px;min-width:265px}
+.hud-tr{top:28px;right:28px;min-width:300px;text-align:right}
+.hud-bl{bottom:28px;left:28px;display:flex;align-items:center;gap:28px;padding:16px 26px}
+.hl{font-size:15px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:8px}
+.hv{font-family:'Courier New',monospace;font-size:26px;color:#e2e8f0;line-height:1.2}
+.hv-sm{font-size:19px;color:rgba(255,255,255,.45);margin-top:4px}
+.hv-xs{font-size:17px;color:rgba(255,255,255,.38)}
+
+/* Zoom */
+.zrow{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-top:18px}
+.zbtn{font-size:28px;color:rgba(255,255,255,.4);cursor:pointer;user-select:none;line-height:1;padding:0 4px}
+.zbtn:hover{color:rgba(255,255,255,.85)}
+#zsl{-webkit-appearance:none;width:185px;height:4px;border-radius:2px;background:rgba(255,255,255,.14);outline:none;cursor:pointer}
+#zsl::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#60a5fa;cursor:pointer}
+#zsl::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#60a5fa;border:none;cursor:pointer}
+.zhint{font-size:13px;color:rgba(255,255,255,.2);margin-top:9px;text-align:right}
+
+/* Legend */
+.li{display:flex;align-items:center;gap:11px;font-size:18px;color:rgba(255,255,255,.5)}
+.ld{width:15px;height:15px;border-radius:50%;border:2px solid;flex-shrink:0}
+.ld.r{border-color:#60a5fa}.ld.t{border-color:#f97316}.ld.d{border-color:#a78bfa}.ld.s{background:#fbbf24;border-color:#fbbf24}
+
+/* Popup */
+#pop{position:fixed;top:50%;right:36px;transform:translateY(-50%);width:460px;
+     background:rgba(4,6,20,.96);border:1px solid rgba(96,165,250,.22);border-radius:20px;
+     padding:38px 36px 32px;z-index:50;transition:opacity .25s,transform .25s}
+#pop.hid{opacity:0;pointer-events:none;transform:translateY(-50%) translateX(16px)}
+#pcl{position:absolute;top:16px;right:16px;background:none;border:none;
+     color:rgba(255,255,255,.3);font-size:22px;cursor:pointer;padding:6px 10px;border-radius:8px}
+#pcl:hover{color:rgba(255,255,255,.8);background:rgba(255,255,255,.08)}
+#pbadge{display:inline-block;font-size:13px;letter-spacing:2.5px;font-weight:600;
+        padding:5px 14px;border-radius:20px;margin-bottom:14px;border:1px solid currentColor;opacity:.8}
+#pname{font-size:26px;font-weight:600;color:#f8fafc;line-height:1.3;margin-bottom:8px}
+#pmeta{font-family:'Courier New',monospace;font-size:15px;color:rgba(255,255,255,.38);margin-bottom:16px}
+#pdist{font-family:'Courier New',monospace;font-size:17px;color:#93c5fd;
+       background:rgba(96,165,250,.07);border-left:3px solid rgba(96,165,250,.4);
+       padding:10px 16px;border-radius:0 8px 8px 0;margin-bottom:20px}
+#pdesc{font-size:17px;line-height:1.7;color:rgba(255,255,255,.6);margin-bottom:24px}
+.arow{display:flex;align-items:center;gap:12px;font-size:16px;color:rgba(255,255,255,.38);margin-bottom:20px}
+.adot{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.15);flex-shrink:0;transition:background .3s}
+.adot.on{background:#4ade80;box-shadow:0 0 10px #4ade80;animation:pd 1.2s ease-in-out infinite}
+@keyframes pd{0%,100%{opacity:1}50%{opacity:.4}}
+#pcite{display:inline-block;font-size:16px;color:rgba(96,165,250,.7);text-decoration:none;
+       border:1px solid rgba(96,165,250,.2);padding:9px 20px;border-radius:10px}
+#pcite:hover{color:#93c5fd;border-color:rgba(96,165,250,.5);background:rgba(96,165,250,.07)}
+#pcite.hid{display:none}
+
+/* Loading */
+#ls{position:fixed;top:0;left:0;width:100%;height:100%;background:#000010;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;transition:opacity .9s}
+#ls.out{opacity:0;pointer-events:none}
+.lt{font-family:'Courier New',monospace;font-size:22px;letter-spacing:11px;color:rgba(255,255,255,.45);margin-bottom:20px}
+.lsub{font-size:18px;color:rgba(255,255,255,.22)}
+
+/* Error */
+#err{display:none;position:fixed;top:14px;left:14px;right:14px;background:rgba(180,0,0,.9);
+     color:#fff;padding:18px 22px;border-radius:12px;font:17px 'Courier New',monospace;z-index:9999;white-space:pre-wrap}
+</style>
+</head>
+<body>
+
+<div id="err"></div>
+<canvas id="cv"></canvas>
+
+<div class="hud hud-tl">
+  <div class="hl">EARTH DATE</div>
+  <div id="hdate" class="hv">—</div>
+  <div id="htime" class="hv hv-sm">—</div>
+</div>
+
+<div class="hud hud-tr">
+  <div class="hl">LIGHT RADIUS</div>
+  <div id="hradius" class="hv">—</div>
+  <div class="hl" style="margin-top:8px">SCALE</div>
+  <div id="hscale" class="hv hv-xs">—</div>
+  <div class="zrow">
+    <span class="zbtn" id="zmout">−</span>
+    <input type="range" id="zsl" min="0" max="100" value="35">
+    <span class="zbtn" id="zmin">+</span>
+  </div>
+  <div class="zhint">scroll or drag to zoom</div>
+</div>
+
+<div class="hud hud-bl">
+  <div class="li"><span class="ld r"></span>Radio</div>
+  <div class="li"><span class="ld t"></span>Television</div>
+  <div class="li"><span class="ld d"></span>Directed</div>
+  <div class="li"><span class="ld s"></span>Spacecraft</div>
+</div>
+
+<div id="pop" class="hid">
+  <button id="pcl">✕</button>
+  <div id="pbadge"></div>
+  <div id="pname"></div>
+  <div id="pmeta"></div>
+  <div id="pdist"></div>
+  <div id="pdesc"></div>
+  <div class="arow"><span class="adot" id="adot"></span><span id="albl">No audio</span></div>
+  <a id="pcite" class="hid" href="#" target="_blank" rel="noopener">View source ↗</a>
+</div>
+
+<div id="ls">
+  <div class="lt">HUMANITY'S ECHO</div>
+  <div class="lsub" id="lsub">Initializing…</div>
+</div>
+
+<script>
+'use strict';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DATA — edit this to add signals and spacecraft
+// ─────────────────────────────────────────────────────────────────────────────
+// To add audio: drop an MP3 into the audio/ folder and set audio_file below.
+
+var SIGNALS = [
+  { id:'marconi_1895', name:"Marconi's First Radio Transmission",
+    description:"Guglielmo Marconi transmits the first radio signal across a field in Bologna, Italy — humanity's first accidental whisper into the cosmos. This invisible ripple has now traveled over 130 light-years into space.",
+    year:1895, month:12, day:1, type:'radio', color:'#60a5fa',
+    audio_file:null, citation_url:'https://www.britannica.com/biography/Guglielmo-Marconi' },
+
+  { id:'WAAM_1928', name:"WAAM — September 11, 1928",
+    description:"WAAM in New York City broadcasts an early radio program, sending a wave of sound into the cosmos.",
+    year:1928, month:9, day:11, type:'radio', color:'#60a5fa',
+    audio_file:'09111928_WAAM.mp3', citation_url:'https://archive.org/details/waam-september-11-1928' },
+
+  { id:'kdka_1920', name:"KDKA — First Commercial Broadcast",
+    description:"KDKA in Pittsburgh becomes the world's first commercial radio station, broadcasting election returns. Millions of radios would follow — each leaking signals into the cosmos.",
+    year:1920, month:11, day:2, type:'radio', color:'#60a5fa',
+    audio_file:null, citation_url:'https://www.fcc.gov/media/radio/history-of-broadcasting' },
+
+  { id:'olympics_1936', name:"Berlin Olympics — First Major TV Broadcast",
+    description:"The 1936 Berlin Olympics is the first event broadcast live on television to public viewing rooms across the city. This is widely considered the first strong television signal to escape Earth's atmosphere.",
+    year:1936, month:8, day:1, type:'tv', color:'#f97316',
+    audio_file:null, citation_url:'https://www.olympic.org/berlin-1936' },
+
+  { id:'vj_day_1945', name:"V-J Day Radio Announcement",
+    description:"President Truman announces Japan's surrender, ending World War II. Radio stations across the globe broadcast simultaneously — an unprecedented pulse of human joy radiating into the galaxy.",
+    year:1945, month:8, day:15, type:'radio', color:'#60a5fa',
+    audio_file:null, citation_url:'https://www.history.com/topics/world-war-ii/v-j-day' },
+
+  { id:'apollo_11_1969', name:"Apollo 11 — One Small Step",
+    description:"Neil Armstrong becomes the first human to walk on the Moon. His words — \"That's one small step for man, one giant leap for mankind\" — were broadcast to 600 million people and now travel forever into the galaxy.",
+    year:1969, month:7, day:20, type:'tv', color:'#f97316',
+    audio_file:null, citation_url:'https://www.nasa.gov/mission/apollo-11/' },
+
+  { id:'arecibo_1974', name:"Arecibo Message",
+    description:"The first deliberate, high-powered radio message aimed at the stars. Transmitted toward globular cluster M13 (25,000 light-years away) from Arecibo Observatory. It encoded a pixelated image of a human, our solar system, and the structure of DNA.",
+    year:1974, month:11, day:16, type:'directed', color:'#a78bfa',
+    audio_file:null, citation_url:'https://www.seti.org/seti-institute/project/details/arecibo-message' },
+
+  { id:'pale_blue_dot_1990', name:"Pale Blue Dot",
+    description:"Voyager 1, at 6 billion km from Earth, photographs our planet. The resulting image — a pale blue dot in a vast dark ocean — becomes one of the most profound images ever made.",
+    year:1990, month:2, day:14, type:'other', color:'#94a3b8',
+    audio_file:null, citation_url:'https://www.planetary.org/worlds/pale-blue-dot' }
+];
+
+var SPACECRAFT = [
+  { id:'pioneer_10', name:"Pioneer 10",
+    description:"The first spacecraft to traverse the asteroid belt and make direct observations of Jupiter. Carries a golden plaque — humanity's first physical message to the cosmos. Last contact: January 2003.",
+    launched_year:1972, launched_month:3, launched_day:2,
+    speed_au_per_year:2.543, direction_deg:55, color:'#fb923c',
+    audio_file:null, citation_url:'https://solarsystem.nasa.gov/missions/pioneer-10/in-depth/' },
+
+  { id:'pioneer_11', name:"Pioneer 11",
+    description:"The first spacecraft to study Saturn up close. Carries a golden plaque identical to Pioneer 10's. Last contact: November 1995.",
+    launched_year:1973, launched_month:4, launched_day:5,
+    speed_au_per_year:2.433, direction_deg:140, color:'#fb923c',
+    audio_file:null, citation_url:'https://solarsystem.nasa.gov/missions/pioneer-11/in-depth/' },
+
+  { id:'voyager_2', name:"Voyager 2",
+    description:"The only spacecraft to visit all four outer planets. Entered interstellar space in November 2018. Carries the Golden Record.",
+    launched_year:1977, launched_month:8, launched_day:20,
+    speed_au_per_year:3.254, direction_deg:205, color:'#fbbf24',
+    audio_file:null, citation_url:'https://voyager.jpl.nasa.gov' },
+
+  { id:'voyager_1', name:"Voyager 1",
+    description:"The farthest human-made object from Earth. Crossed into interstellar space in 2012. Carries the Golden Record — a message to any civilization that might find it.",
+    launched_year:1977, launched_month:9, launched_day:5,
+    speed_au_per_year:3.599, direction_deg:312, color:'#fbbf24',
+    audio_file:null, citation_url:'https://voyager.jpl.nasa.gov' }
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PHYSICS
+// ─────────────────────────────────────────────────────────────────────────────
+var MS_PER_YEAR = 365.25 * 24 * 3600 * 1000;
+var AU_PER_LY   = 63241.077;
+var LY_MIN = 0.005, LY_MAX = 130000;
+var vp = 300; // viewport width in light-years (default)
+
+function setVP(ly) { vp = Math.max(LY_MIN, Math.min(LY_MAX, ly)); }
+function pxPerLY(cw) { return cw / vp; }
+function zoomDelta(d) { setVP(vp * Math.pow(1.0012, d)); }
+function sliderToLY(v) { var a=Math.log10(LY_MAX),b=Math.log10(LY_MIN); return Math.pow(10, a-(v/100)*(a-b)); }
+function lyToSlider(ly) { var a=Math.log10(LY_MAX),b=Math.log10(LY_MIN); return ((a-Math.log10(Math.max(LY_MIN,Math.min(LY_MAX,ly))))/(a-b))*100; }
+function signalAgeLY(yr, mo, dy, now) { return Math.max(0, (now - new Date(yr,(mo||1)-1,dy||1)) / MS_PER_YEAR); }
+function auToLY(au) { return au / AU_PER_LY; }
+function fmtLY(ly) {
+  if (ly < 0.0001) return (ly*AU_PER_LY).toFixed(1)+' AU';
+  if (ly < 1)      return ly.toFixed(4)+' LY';
+  if (ly < 1000)   return ly.toFixed(2)+' LY';
+  return (ly/1000).toFixed(2)+' kLY';
+}
+function craftAU(c, now) {
+  var yrs = Math.max(0, (now - new Date(c.launched_year,(c.launched_month||1)-1,c.launched_day||1)) / MS_PER_YEAR);
+  return yrs * (c.speed_au_per_year || 3.5);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// GAIA DR3 — real star positions, colors, and sizes
+// ─────────────────────────────────────────────────────────────────────────────
+var gaiaStars = null; // null = loading, [] = failed/empty, array = ready
+
+// Equatorial (RA, Dec degrees) → Galactic (l, b radians)  IAU 1958 constants
+function eqToGal(ra_d, dec_d) {
+  var D=Math.PI/180, ra=ra_d*D, dec=dec_d*D;
+  var aN=192.85948*D, dN=27.12825*D, lN=122.93192*D;
+  var b=Math.asin(Math.sin(dec)*Math.sin(dN)+Math.cos(dec)*Math.cos(dN)*Math.cos(ra-aN));
+  var l=lN-Math.atan2(Math.cos(dec)*Math.sin(ra-aN),
+                       Math.sin(dec)*Math.cos(dN)-Math.cos(dec)*Math.sin(dN)*Math.cos(ra-aN));
+  return {l:((l%(2*Math.PI))+2*Math.PI)%(2*Math.PI), b:b};
+}
+
+// BP-RP color index → RGBA string  (blue O/B → white A → yellow G → orange K → red M)
+function starRGBA(bp, alpha) {
+  var s=[[-0.5,147,188,255],[0.0,210,228,255],[0.4,255,248,235],
+         [0.8,255,232,170],[1.2,255,185,90],[1.8,255,130,50],[3.5,255,70,30]];
+  if (bp<=s[0][0])               return 'rgba('+s[0][1]+','+s[0][2]+','+s[0][3]+','+alpha+')';
+  if (bp>=s[s.length-1][0]) { var e=s[s.length-1]; return 'rgba('+e[1]+','+e[2]+','+e[3]+','+alpha+')'; }
+  for (var i=0;i<s.length-1;i++) {
+    if (bp>=s[i][0]&&bp<=s[i+1][0]) {
+      var t=(bp-s[i][0])/(s[i+1][0]-s[i][0]);
+      return 'rgba('+Math.round(s[i][1]+t*(s[i+1][1]-s[i][1]))+','+
+                     Math.round(s[i][2]+t*(s[i+1][2]-s[i][2]))+','+
+                     Math.round(s[i][3]+t*(s[i+1][3]-s[i][3]))+','+alpha+')';
+    }
+  }
+  return 'rgba(255,255,255,'+alpha+')';
+}
+
+function loadGaia() {
+  fetch('GaiaAnalysis/GaiaNearby1.csv')
+    .then(function(r){return r.text();})
+    .then(function(txt){
+      var lines=txt.trim().split('\n'), hdr=lines[0].split(',');
+      var iRA=hdr.indexOf('ra'), iDec=hdr.indexOf('dec');
+      var iPlx=hdr.indexOf('parallax'), iPE=hdr.indexOf('parallax_over_error');
+      var iMag=hdr.indexOf('phot_g_mean_mag'), iBP=hdr.indexOf('bp_rp');
+      var out=[], magMin=99, magMax=-99;
+      // First pass: find magnitude range for normalization
+      for (var i=1;i<lines.length;i++){
+        var c=lines[i].split(','), mag=+c[iMag];
+        if(!isNaN(mag)){magMin=Math.min(magMin,mag);magMax=Math.max(magMax,mag);}
+      }
+      var magRange=magMax-magMin||1;
+      for (var j=1;j<lines.length;j++){
+        var col=lines[j].split(',');
+        var plx=+col[iPlx], pe=+col[iPE], mag=+col[iMag], bp=+col[iBP];
+        var ra=+col[iRA], dec=+col[iDec];
+        if(!plx||plx<=0||isNaN(mag)||isNaN(bp)) continue;
+        var dist=3261.56/plx;                  // parallax(mas) → LY
+        var gb=eqToGal(ra,dec);
+        // Flatten to galactic plane (top-down view)
+        var x=dist*Math.cos(gb.b)*Math.cos(gb.l);   // toward l=0 (galactic centre)
+        var y=dist*Math.cos(gb.b)*Math.sin(gb.l);   // perpendicular
+        // Visual radius: brightest (low mag) → bigger dot
+        var bright=(magMax-mag)/magRange;            // 0=faint, 1=bright
+        var radius=Math.max(0.4, 0.5+bright*2.5);
+        // Opacity: brightness + parallax quality bonus
+        var quality=Math.min(1,pe/25);
+        var alpha=Math.min(0.92, 0.25+bright*0.55+quality*0.15);
+        out.push({x:x,y:y,r:radius,bp:bp,al:alpha});
+      }
+      gaiaStars=out;
+      console.log('Gaia: '+out.length+' stars loaded ('+Math.round(3261.56/0.5)+'–'+Math.round(3261.56/0.23)+' LY)');
+    })
+    .catch(function(e){
+      console.warn('Gaia CSV not available:',e.message);
+      gaiaStars=[];
+    });
+}
+
+function drawGaiaStars(cx, cy, pxLY) {
+  if (!gaiaStars||!gaiaStars.length) return;
+  for (var i=0;i<gaiaStars.length;i++) {
+    var s=gaiaStars[i];
+    var sx=cx+s.x*pxLY, sy=cy-s.y*pxLY;   // flip y so galactic N is up
+    if (sx<-8||sx>cv.width+8||sy<-8||sy>cv.height+8) continue;
+    var vr=Math.max(0.4, Math.min(5, s.r));
+    // Soft glow for brighter stars
+    if (vr>1.2) {
+      ctx.beginPath(); ctx.arc(sx,sy,vr*2.8,0,Math.PI*2);
+      ctx.fillStyle=starRGBA(s.bp, s.al*0.12); ctx.fill();
+    }
+    ctx.beginPath(); ctx.arc(sx,sy,vr,0,Math.PI*2);
+    ctx.fillStyle=starRGBA(s.bp, s.al); ctx.fill();
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AUDIO  — radio-tuning sampler via Web Audio API
+// ─────────────────────────────────────────────────────────────────────────────
+var audioCtx = null, audioSrc = null, audioGain = null, audioBufs = {};
+
+function ensureCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function stopAudio() {
+  if (audioGain && audioCtx) {
+    var t = audioCtx.currentTime;
+    audioGain.gain.setValueAtTime(audioGain.gain.value, t);
+    audioGain.gain.linearRampToValueAtTime(0, t + 0.4);
+  }
+  if (audioSrc) { var s=audioSrc; audioSrc=null; setTimeout(function(){ try{s.stop();}catch(e){} }, 500); }
+  setAudioUI(false);
+}
+
+function playAudio(file) {
+  ensureCtx();
+  stopAudio();
+  if (!file) return;
+
+  var url = 'audio/' + file;
+  var load = audioBufs[url]
+    ? Promise.resolve(audioBufs[url])
+    : fetch(url)
+        .then(function(r){ if(!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+        .then(function(ab){ return audioCtx.decodeAudioData(ab); })
+        .then(function(buf){ audioBufs[url]=buf; return buf; });
+
+  load.then(function(buf) {
+    var offset = Math.random() * buf.duration * 0.7;
+    audioGain = audioCtx.createGain();
+    audioGain.gain.setValueAtTime(0, audioCtx.currentTime);
+    audioGain.gain.linearRampToValueAtTime(0.8, audioCtx.currentTime + 0.5);
+    var flt = audioCtx.createBiquadFilter();
+    flt.type = 'bandpass'; flt.frequency.value = 1800; flt.Q.value = 0.8;
+    audioSrc = audioCtx.createBufferSource();
+    audioSrc.buffer = buf; audioSrc.loop = true;
+    audioSrc.connect(flt); flt.connect(audioGain); audioGain.connect(audioCtx.destination);
+    audioSrc.start(0, offset);
+    setAudioUI(true);
+  }).catch(function(e) {
+    setAudioUI(false);
+    document.getElementById('albl').textContent = 'Audio file not found (place MP3 in audio/ folder)';
+  });
+}
+
+function setAudioUI(on) {
+  document.getElementById('adot').className = 'adot' + (on ? ' on' : '');
+  if (on) document.getElementById('albl').textContent = 'Sampling signal…';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// NAMED NEARBY STARS — loaded from data/nearby_stars.json
+// ─────────────────────────────────────────────────────────────────────────────
+var namedStars = null;   // null = loading, [] = failed/empty, array = ready
+var hovStar    = null;
+
+// Spectral type first letter → base star color
+var SPEC_COLOR = {
+  'O':'#b0c8ff','B':'#c8d8ff','A':'#f0f5ff','F':'#fff7ee',
+  'G':'#ffe9a8','K':'#ffaa45','M':'#ff5a30','D':'#ddeeff','W':'#b0c8ff'
+};
+
+function specColor(sp) {
+  return SPEC_COLOR[(sp||'G').charAt(0)] || '#ffffff';
+}
+
+// Apparent magnitude → canvas dot radius (brighter = bigger)
+function magToR(mag) {
+  return Math.max(0.6, Math.min(5, 3.6 - (mag + 1.5) * 0.28));
+}
+
+function loadNamedStars() {
+  fetch('data/nearby_stars.json')
+    .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(data) {
+      var raw = data.stars || [], out = [];
+      for (var i=0;i<raw.length;i++) {
+        var s = raw[i];
+        if (!s.distance_ly || !s.ra || s.dec==null) continue;
+        var gb   = eqToGal(s.ra, s.dec);
+        var dist = s.distance_ly;
+        out.push({
+          name:     s.name,
+          desc:     s.description || '',
+          dist:     dist,
+          mag:      s.apparent_mag,
+          sp:       s.spectral_type || 'G',
+          planets:  !!s.has_planets,
+          cite:     s.citation_url || '',
+          col:      s.color || specColor(s.spectral_type),
+          r:        magToR(s.apparent_mag != null ? s.apparent_mag : 5),
+          // Galactic-plane 2D coords (same projection as Gaia)
+          x:  dist * Math.cos(gb.b) * Math.cos(gb.l),
+          y:  dist * Math.cos(gb.b) * Math.sin(gb.l)
+        });
+      }
+      namedStars = out;
+      console.log('Named stars: ' + out.length + ' loaded');
+    })
+    .catch(function(e){
+      console.warn('nearby_stars.json not available:', e.message);
+      namedStars = [];
+    });
+}
+
+function drawNamedStars(cx, cy, pxLY) {
+  if (!namedStars || !namedStars.length) return;
+  for (var i=0;i<namedStars.length;i++) {
+    var s  = namedStars[i];
+    var sx = cx + s.x * pxLY;
+    var sy = cy - s.y * pxLY;
+    if (sx<-30||sx>cv.width+30||sy<-30||sy>cv.height+30) continue;
+
+    var hov = (hovStar === s);
+    var vr  = Math.max(0.6, Math.min(6, s.r));
+
+    // Outer glow — more pronounced than Gaia stars
+    ctx.beginPath(); ctx.arc(sx, sy, vr*3.5, 0, Math.PI*2);
+    ctx.fillStyle = hex2rgba(s.col, hov ? 0.22 : 0.10); ctx.fill();
+
+    // Star body
+    ctx.beginPath(); ctx.arc(sx, sy, vr, 0, Math.PI*2);
+    ctx.fillStyle = hov ? s.col : hex2rgba(s.col, 0.90); ctx.fill();
+
+    // Thin identification ring — marks these as "named" vs anonymous Gaia
+    ctx.beginPath(); ctx.arc(sx, sy, vr + 2, 0, Math.PI*2);
+    ctx.strokeStyle = hex2rgba(s.col, hov ? 0.75 : 0.30);
+    ctx.lineWidth = 0.6; ctx.stroke();
+
+    // Dashed extra ring for stars with confirmed planets
+    if (s.planets) {
+      ctx.setLineDash([2, 3]);
+      ctx.beginPath(); ctx.arc(sx, sy, vr + 5, 0, Math.PI*2);
+      ctx.strokeStyle = hex2rgba(s.col, hov ? 0.55 : 0.20);
+      ctx.lineWidth = 0.5; ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // Name label: always for bright naked-eye stars (mag < 2.5), hover for rest
+    if (hov || s.mag < 2.5) {
+      ctx.font = (hov ? '600 18px' : '15px') + ' system-ui,sans-serif';
+      ctx.textAlign = 'center';
+      ctx.shadowColor = 'rgba(0,0,0,0.9)'; ctx.shadowBlur = 10;
+      ctx.fillStyle = hov ? s.col : hex2rgba(s.col, 0.88);
+      ctx.fillText(s.name, sx, sy - vr - 13);
+      ctx.shadowBlur = 0; ctx.shadowColor = 'transparent';
+    }
+  }
+}
+
+function updateHoverStars(mx, my, cx, cy) {
+  if (!namedStars || !namedStars.length) return;
+  var px = pxPerLY(cv.width), best = Infinity;
+  hovStar = null;
+  for (var i=0;i<namedStars.length;i++) {
+    var s  = namedStars[i];
+    var sx = cx + s.x * px;
+    var sy = cy - s.y * px;
+    var dx = mx-sx, dy = my-sy;
+    var d  = Math.sqrt(dx*dx+dy*dy);
+    var hitR = Math.max(8, s.r + 4);   // generous hit zone
+    if (d < hitR && d < best) { best=d; hovStar=s; }
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RENDERER
+// ─────────────────────────────────────────────────────────────────────────────
+var cv  = document.getElementById('cv');
+var ctx = cv.getContext('2d');
+var stars = [], earthPulse = 0;
+var TC = { radio:'#60a5fa', tv:'#f97316', directed:'#a78bfa', optical:'#34d399', spacecraft:'#fbbf24', other:'#94a3b8' };
+
+function hex2rgba(hex, a) {
+  var m=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return m ? 'rgba('+parseInt(m[1],16)+','+parseInt(m[2],16)+','+parseInt(m[3],16)+','+a+')' : 'rgba(150,150,150,'+a+')';
+}
+
+function mkStars() {
+  // Procedural background — faint "dust" so space never looks empty at any zoom
+  var w=cv.width, h=cv.height; stars=[];
+  for (var i=0;i<900;i++) {
+    var ang=Math.random()*Math.PI*2, r=Math.pow(Math.random(),.5)*Math.max(w,h)*.7;
+    stars.push({x:w/2+Math.cos(ang)*r, y:h/2+Math.sin(ang)*r,
+                sz:Math.random()*.8+.15, base:Math.random()*.12+.03,
+                sp:Math.random()*.3+.05, ph:Math.random()*Math.PI*2});
+  }
+}
+
+function drawBg() {
+  var w=cv.width, h=cv.height;
+  ctx.fillStyle='#00000a'; ctx.fillRect(0,0,w,h);
+  var g=ctx.createRadialGradient(w/2,h/2,0,w/2,h/2,Math.max(w,h)*.5);
+  g.addColorStop(0,'rgba(25,15,55,.2)'); g.addColorStop(.4,'rgba(12,8,28,.1)'); g.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+}
+
+function drawStars(t) {
+  for (var i=0;i<stars.length;i++) {
+    var s=stars[i], al=Math.max(.04,s.base+Math.sin(t*s.sp+s.ph)*.12);
+    ctx.beginPath(); ctx.arc(s.x,s.y,s.sz,0,Math.PI*2);
+    ctx.fillStyle='rgba(210,225,255,'+al.toFixed(3)+')'; ctx.fill();
+  }
+}
+
+// ── Solar System ──────────────────────────────────────────────────────────────
+
+// Planet orbital data: name, semi-major axis (AU), period (days),
+// mean longitude at J2000.0 (deg), display color, dot radius
+var PLANETS = [
+  {n:'Mercury', au:0.387,  T:87.97,   L0:252.25, col:'#a8a8a8', r:2.5},
+  {n:'Venus',   au:0.723,  T:224.70,  L0:181.98, col:'#e8c880', r:3.5},
+  {n:'Earth',   au:1.000,  T:365.25,  L0:100.46, col:'#4a9fdf', r:3.5, isEarth:true},
+  {n:'Mars',    au:1.524,  T:686.97,  L0:355.45, col:'#d04020', r:3.0},
+  {n:'Jupiter', au:5.203,  T:4332.6,  L0:34.40,  col:'#d4a96a', r:7.5},
+  {n:'Saturn',  au:9.537,  T:10759,   L0:50.08,  col:'#e8d890', r:6.5, rings:true},
+  {n:'Uranus',  au:19.19,  T:30688,   L0:314.20, col:'#7de8e8', r:5.0},
+  {n:'Neptune', au:30.07,  T:60182,   L0:304.88, col:'#4060ee', r:5.0},
+];
+var J2000 = new Date('2000-01-01T12:00:00Z').getTime();
+
+function planetAngle(p, now) {
+  // Mean heliocentric longitude — simple circular orbit approximation
+  var d = (now.getTime() - J2000) / 86400000;
+  return ((p.L0 + 360 / p.T * d) % 360) * Math.PI / 180;
+}
+
+// Draw a fuzzy ring band (Kuiper Belt, Oort Cloud)
+function drawFuzzyBand(cx, cy, r1, r2, rgb, maxAl, label) {
+  if (r2 < 1) return;
+  if (r1 > Math.sqrt(cv.width*cv.width + cv.height*cv.height) * 1.6) return;
+  var steps = 14, w = (r2 - r1) / steps * 2.5;
+  for (var i = 0; i <= steps; i++) {
+    var t  = i / steps;
+    var rr = r1 + t * (r2 - r1);
+    var al = maxAl * Math.sin(t * Math.PI);    // bell curve — dense in middle
+    ctx.beginPath(); ctx.arc(cx, cy, rr, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(' + rgb + ',' + al.toFixed(3) + ')';
+    ctx.lineWidth = w; ctx.stroke();
+  }
+  // Label at top of band when it's a reasonable size on screen
+  var mid = (r1 + r2) / 2;
+  if (label && mid > 40 && mid < Math.max(cv.width, cv.height) * 0.9) {
+    ctx.font = '13px system-ui,sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'rgba(' + rgb + ',' + Math.min(0.55, maxAl * 4) + ')';
+    ctx.shadowColor = 'rgba(0,0,0,.8)'; ctx.shadowBlur = 6;
+    ctx.fillText(label, cx, cy - mid - 10);
+    ctx.shadowBlur = 0; ctx.shadowColor = 'transparent';
+  }
+}
+
+function drawSolSystem(cx, cy, pxLY, now) {
+  earthPulse = (earthPulse + 0.012) % (Math.PI * 2);
+  var pxAU = auToLY(1) * pxLY;   // pixels per AU
+
+  // ── Oort Cloud ────────────────────────────────────────────────────────────
+  // Inner Oort: ~2,000–5,000 AU  (~0.032–0.079 LY)
+  drawFuzzyBand(cx, cy,
+    auToLY(2000)  * pxLY,
+    auToLY(5000)  * pxLY,
+    '100,130,210', 0.09, 'Inner Oort Cloud');
+  // Outer Oort: ~20,000–100,000 AU  (~0.32–1.58 LY)
+  drawFuzzyBand(cx, cy,
+    auToLY(20000) * pxLY,
+    auToLY(100000)* pxLY,
+    '80,110,190',  0.06, 'Outer Oort Cloud');
+
+  // ── Kuiper Belt: 30–50 AU ─────────────────────────────────────────────────
+  drawFuzzyBand(cx, cy, 30*pxAU, 50*pxAU, '140,190,240', 0.20, 'Kuiper Belt');
+
+  // ── Asteroid Belt: 2.2–3.2 AU (subtle) ───────────────────────────────────
+  drawFuzzyBand(cx, cy, 2.2*pxAU, 3.2*pxAU, '180,160,120', 0.10, 'Asteroid Belt');
+
+  // ── Planet orbits + bodies ────────────────────────────────────────────────
+  for (var i = 0; i < PLANETS.length; i++) {
+    var p    = PLANETS[i];
+    var orR  = p.au * pxAU;
+    if (orR < 0.8) continue;          // orbit ring too small to draw
+
+    // Orbit circle
+    ctx.beginPath(); ctx.arc(cx, cy, orR, 0, Math.PI*2);
+    ctx.strokeStyle = p.isEarth
+      ? 'rgba(74,159,223,0.18)'       // Earth's orbit slightly brighter
+      : 'rgba(255,255,255,0.07)';
+    ctx.lineWidth = 0.8; ctx.stroke();
+
+    if (orR < 2) continue;            // planet dot too small
+
+    // Planet position (heliocentric longitude → canvas XY)
+    var ang = planetAngle(p, now);
+    var sx  = cx + Math.cos(ang) * orR;
+    var sy  = cy + Math.sin(ang) * orR;
+
+    // Skip if off screen
+    if (sx < -20 || sx > cv.width+20 || sy < -20 || sy > cv.height+20) continue;
+
+    // Glow
+    var dotR = Math.max(2, Math.min(p.r, orR * 0.25));
+    ctx.beginPath(); ctx.arc(sx, sy, dotR * 2.5, 0, Math.PI*2);
+    ctx.fillStyle = hex2rgba(p.col, 0.15); ctx.fill();
+
+    // Planet body
+    ctx.beginPath(); ctx.arc(sx, sy, dotR, 0, Math.PI*2);
+    ctx.fillStyle = p.col; ctx.fill();
+
+    // Saturn rings (ellipse tilt suggestion)
+    if (p.rings && dotR > 2) {
+      ctx.beginPath();
+      ctx.ellipse(sx, sy, dotR * 2.8, dotR * 0.75, 0.45, 0, Math.PI*2);
+      ctx.strokeStyle = hex2rgba(p.col, 0.65);
+      ctx.lineWidth = Math.max(0.8, dotR * 0.35); ctx.stroke();
+    }
+
+    // Earth special: small cross-hair to mark signal origin
+    if (p.isEarth && dotR > 2) {
+      ctx.strokeStyle = hex2rgba(p.col, 0.6);
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(sx-dotR*2,sy); ctx.lineTo(sx+dotR*2,sy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(sx,sy-dotR*2); ctx.lineTo(sx,sy+dotR*2); ctx.stroke();
+    }
+
+    // Name label (only when planet is visually large enough to need one)
+    if (orR > 28) {
+      ctx.font = (p.isEarth ? 'bold ' : '') + '15px system-ui,sans-serif';
+      ctx.textAlign = 'center';
+      ctx.shadowColor = 'rgba(0,0,0,.9)'; ctx.shadowBlur = 8;
+      ctx.fillStyle = hex2rgba(p.col, p.isEarth ? 1.0 : 0.85);
+      ctx.fillText(p.n, sx, sy - dotR - 10);
+      ctx.shadowBlur = 0; ctx.shadowColor = 'transparent';
+    }
+  }
+
+  // ── Sol ───────────────────────────────────────────────────────────────────
+  var r = 9 + Math.sin(earthPulse) * 1.8;
+
+  // Corona glow layers
+  for (var j = 4; j >= 1; j--) {
+    ctx.beginPath(); ctx.arc(cx, cy, r + j*11, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(255,185,40,' + (.05*j) + ')';
+    ctx.lineWidth = 14; ctx.stroke();
+  }
+
+  // Sol body
+  var sg = ctx.createRadialGradient(cx-2, cy-2, 0, cx, cy, r);
+  sg.addColorStop(0,   '#fffce0');
+  sg.addColorStop(0.45,'#ffd700');
+  sg.addColorStop(1,   '#ff7700');
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2);
+  ctx.fillStyle = sg; ctx.fill();
+
+  // Sol label
+  ctx.fillStyle = 'rgba(255,215,80,.65)';
+  ctx.font = 'bold 18px "Courier New",monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('SOL', cx, cy + r + 26);
+}
+
+function drawCircle(cx,cy,rPx,sig,hov) {
+  if (rPx<.5) return;
+  if (rPx>Math.sqrt(cv.width*cv.width+cv.height*cv.height)*3) return;
+  var col=sig.color||TC[sig.type]||TC.other, lw=hov?2.5:1.5, al=hov?.85:.45, gl=hov?.18:.06;
+  for (var i=3;i>=1;i--) {
+    ctx.beginPath(); ctx.arc(cx,cy,rPx,0,Math.PI*2);
+    ctx.strokeStyle=hex2rgba(col,gl*(4-i)/3); ctx.lineWidth=lw+i*5; ctx.stroke();
+  }
+  ctx.beginPath(); ctx.arc(cx,cy,rPx,0,Math.PI*2);
+  ctx.strokeStyle=hex2rgba(col,al); ctx.lineWidth=lw; ctx.stroke();
+  if (hov) {
+    ctx.font='600 19px system-ui,sans-serif'; ctx.textAlign='center';
+    ctx.shadowColor='rgba(0,0,0,.9)'; ctx.shadowBlur=10;
+    ctx.fillStyle=hex2rgba(col,.95);
+    ctx.fillText(sig.name, cx, Math.max(26,cy-rPx-18));
+    ctx.shadowBlur=0; ctx.shadowColor='transparent';
+  }
+}
+
+function drawCraft(cx,cy,dPx,c,hov) {
+  if (dPx<.5) return;
+  var ang=((c.direction_deg||0)-90)*Math.PI/180;
+  var x=cx+Math.cos(ang)*dPx, y=cy+Math.sin(ang)*dPx;
+  if (x<-30||x>cv.width+30||y<-30||y>cv.height+30) return;
+  var col=c.color||'#fbbf24', r=hov?5:3;
+  ctx.beginPath(); ctx.arc(x,y,r+4,0,Math.PI*2); ctx.fillStyle=hex2rgba(col,.12); ctx.fill();
+  ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fillStyle=col; ctx.fill();
+  if (hov||dPx>30) {
+    ctx.font='17px system-ui,sans-serif'; ctx.textAlign='center';
+    ctx.shadowColor='rgba(0,0,0,.9)'; ctx.shadowBlur=9;
+    ctx.fillStyle=hex2rgba(col,.9); ctx.fillText(c.name,x,y-r-14);
+    ctx.shadowBlur=0; ctx.shadowColor='transparent';
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// HOVER
+// ─────────────────────────────────────────────────────────────────────────────
+var hovSig=null, hovCraft=null;
+
+function updateHover(mx,my,cx,cy,now) {
+  var px=pxPerLY(cv.width), best=Infinity;
+  hovSig=null; hovCraft=null;
+  var i,s,r,dx,dy,dist,diff;
+  for(i=0;i<SIGNALS.length;i++) {
+    s=SIGNALS[i]; r=signalAgeLY(s.year,s.month,s.day,now)*px;
+    if(r<.5) continue;
+    dx=mx-cx; dy=my-cy; dist=Math.sqrt(dx*dx+dy*dy); diff=Math.abs(dist-r);
+    if(diff<9&&diff<best){best=diff;hovSig=s;hovCraft=null;}
+  }
+  var c,ang,sx,sy;
+  for(i=0;i<SPACECRAFT.length;i++) {
+    c=SPACECRAFT[i]; dist=auToLY(craftAU(c,now))*px;
+    ang=((c.direction_deg||0)-90)*Math.PI/180;
+    sx=cx+Math.cos(ang)*dist; sy=cy+Math.sin(ang)*dist;
+    dx=mx-sx; dy=my-sy; diff=Math.sqrt(dx*dx+dy*dy);
+    if(diff<15&&diff<best){best=diff;hovCraft=c;hovSig=null;}
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// POPUP
+// ─────────────────────────────────────────────────────────────────────────────
+var lockedItem=null;
+var TL={radio:'RADIO BROADCAST',tv:'TELEVISION BROADCAST',directed:'DIRECTED SIGNAL',optical:'OPTICAL SIGNAL',spacecraft:'SPACECRAFT',other:'SIGNAL'};
+var TC2={radio:'#60a5fa',tv:'#f97316',directed:'#a78bfa',optical:'#34d399',spacecraft:'#fbbf24',other:'#94a3b8'};
+
+function showPopup(item,now) {
+  lockedItem=item;
+  var isc='launched_year' in item, type=isc?'spacecraft':(item.type||'other');
+  var col=item.color||TC2[type]||'#94a3b8';
+  var b=document.getElementById('pbadge');
+  b.textContent=TL[type]||'SIGNAL'; b.style.color=col; b.style.borderColor=col;
+  document.getElementById('pname').textContent=item.name;
+  if(isc) {
+    document.getElementById('pmeta').textContent='Launched: '+new Date(item.launched_year,(item.launched_month||1)-1,item.launched_day||1).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});
+    var au=craftAU(item,now), ly=auToLY(au);
+    document.getElementById('pdist').textContent=au.toFixed(1)+' AU  ·  '+fmtLY(ly)+' from Earth';
+  } else {
+    document.getElementById('pmeta').textContent='Transmitted: '+new Date(item.year,(item.month||1)-1,item.day||1).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});
+    document.getElementById('pdist').textContent=fmtLY(signalAgeLY(item.year,item.month,item.day,now))+' from Earth';
+  }
+  document.getElementById('pdesc').textContent=item.description||'';
+  document.getElementById('albl').textContent=item.audio_file?'Sampling signal…':'No audio available';
+  var cite=document.getElementById('pcite');
+  if(item.citation_url){cite.href=item.citation_url;cite.classList.remove('hid');}
+  else cite.classList.add('hid');
+  document.getElementById('pop').classList.remove('hid');
+}
+
+function closePopup() {
+  lockedItem=null;
+  document.getElementById('pop').classList.add('hid');
+  document.getElementById('adot').className='adot';
+  stopAudio();
+}
+
+function updatePopDist(now) {
+  if(!lockedItem) return;
+  var isc='launched_year' in lockedItem, el=document.getElementById('pdist');
+  if(isc){var au=craftAU(lockedItem,now); el.textContent=au.toFixed(1)+' AU  ·  '+fmtLY(auToLY(au))+' from Earth';}
+  else el.textContent=fmtLY(signalAgeLY(lockedItem.year,lockedItem.month,lockedItem.day,now))+' from Earth';
+}
+
+function showStarPopup(s) {
+  lockedItem = s;
+  var b = document.getElementById('pbadge');
+  b.textContent = s.sp; b.style.color = s.col; b.style.borderColor = s.col;
+  document.getElementById('pname').textContent = s.name;
+  document.getElementById('pmeta').textContent = 'Distance: ' + s.dist.toFixed(2) + ' LY  ·  ' +
+    (s.planets ? '✦ Confirmed planets' : 'No confirmed planets');
+  document.getElementById('pdist').textContent =
+    s.dist.toFixed(2) + ' LY from Earth  ·  light travel time: ' +
+    s.dist.toFixed(1) + ' years';
+  document.getElementById('pdesc').textContent = s.desc;
+  document.getElementById('adot').className = 'adot';
+  document.getElementById('albl').textContent = '';
+  var cite = document.getElementById('pcite');
+  if (s.cite) { cite.href = s.cite; cite.classList.remove('hid'); }
+  else         { cite.classList.add('hid'); }
+  document.getElementById('pop').classList.remove('hid');
+}
+
+document.getElementById('pcl').addEventListener('click',closePopup);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ZOOM UI
+// ─────────────────────────────────────────────────────────────────────────────
+var zsl=document.getElementById('zsl');
+zsl.value=lyToSlider(vp);
+zsl.addEventListener('input',function(){setVP(sliderToLY(+zsl.value));});
+document.getElementById('zmout').addEventListener('click',function(){setVP(vp*2);zsl.value=lyToSlider(vp);});
+document.getElementById('zmin').addEventListener('click', function(){setVP(vp/2);zsl.value=lyToSlider(vp);});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MAIN LOOP
+// ─────────────────────────────────────────────────────────────────────────────
+var mx=-9999,my=-9999,popOpen=false;
+
+cv.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;});
+cv.addEventListener('click',function(){
+  if (hovSig || hovCraft) {
+    var item = hovSig || hovCraft;
+    stopAudio();
+    showPopup(item, new Date());
+    playAudio(item.audio_file);
+  } else if (hovStar) {
+    stopAudio();
+    showStarPopup(hovStar);
+  } else {
+    closePopup();  // click on empty space = close
+  }
+});
+cv.addEventListener('wheel',function(e){
+  e.preventDefault();zoomDelta(e.deltaY);zsl.value=lyToSlider(vp);
+},{passive:false});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&lockedItem)closePopup();});
+
+function resize() { cv.width=window.innerWidth; cv.height=window.innerHeight; mkStars(); }
+window.addEventListener('resize',resize);
+resize();
+
+function loop(ts) {
+  var now=new Date(), t=ts/1000;
+  var cx=cv.width/2, cy=cv.height/2, px=pxPerLY(cv.width);
+
+  drawBg();
+  drawStars(t);             // procedural background dust
+  drawGaiaStars(cx,cy,px);  // Gaia DR3 field stars (6,500–14,000 LY)
+  drawNamedStars(cx,cy,px); // named nearby stars with labels
+
+  var sorted=SIGNALS.slice().sort(function(a,b){return a.year-b.year;});
+  for(var i=0;i<sorted.length;i++) {
+    var s=sorted[i];
+    drawCircle(cx,cy,signalAgeLY(s.year,s.month,s.day,now)*px,s,hovSig===s);
+  }
+  for(var j=0;j<SPACECRAFT.length;j++) {
+    var c=SPACECRAFT[j];
+    drawCraft(cx,cy,auToLY(craftAU(c,now))*px,c,hovCraft===c);
+  }
+  drawSolSystem(cx, cy, px, now);
+
+  updateHover(mx,my,cx,cy,now);
+  updateHoverStars(mx,my,cx,cy);
+  cv.style.cursor=(hovSig||hovCraft||hovStar)?'pointer':'crosshair';
+
+  // HUD
+  document.getElementById('hdate').textContent=now.toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});
+  document.getElementById('htime').textContent=now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById('hradius').textContent=fmtLY(vp/2);
+  document.getElementById('hscale').textContent='1 px = '+fmtLY(1/px);
+
+  if(lockedItem) updatePopDist(now);
+
+  requestAnimationFrame(loop);
+}
+
+// Start render loop immediately — Gaia loads in background
+requestAnimationFrame(loop);
+
+// Load Gaia + named stars non-blocking
+loadGaia();
+loadNamedStars();
+
+// Fade loading screen
+var ls=document.getElementById('ls');
+document.getElementById('lsub').textContent='Ready';
+setTimeout(function(){
+  ls.classList.add('out');
+  setTimeout(function(){if(ls.parentNode)ls.parentNode.removeChild(ls);},1000);
+},400);
+</script>
+</body>
+</html>

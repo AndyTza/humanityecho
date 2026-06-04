@@ -1,0 +1,312 @@
+{
+  "stars": [
+    {
+      "name": "Proxima Centauri",
+      "description": "The closest known star to Earth at just 4.24 light-years. A faint M-type red dwarf with at least three confirmed planets — including Proxima b, which sits in the habitable zone. Our fastest radio signals won't arrive here for another 4 years.\n",
+      "distance_ly": 4.244,
+      "ra": 217.429,
+      "dec": -62.6792,
+      "apparent_mag": 11.13,
+      "spectral_type": "M5.5Ve",
+      "has_planets": true,
+      "citation_url": "https://www.eso.org/public/news/eso1629/"
+    },
+    {
+      "name": "Alpha Centauri A",
+      "description": "The brightest component of the nearest star system to Earth. A G-type star very similar to our Sun, orbiting with Alpha Centauri B in a wide binary pair 4.37 light-years away.\n",
+      "distance_ly": 4.37,
+      "ra": 219.9021,
+      "dec": -60.834,
+      "apparent_mag": 0.01,
+      "spectral_type": "G2V",
+      "has_planets": false,
+      "citation_url": "https://www.britannica.com/place/Alpha-Centauri"
+    },
+    {
+      "name": "Alpha Centauri B",
+      "description": "The orange K-type companion to Alpha Centauri A, together forming the closest Sun-like star system to Earth. The pair orbit each other every 79.9 years at roughly the distance between Saturn and our Sun.\n",
+      "distance_ly": 4.37,
+      "ra": 219.92,
+      "dec": -60.838,
+      "apparent_mag": 1.33,
+      "spectral_type": "K1V",
+      "has_planets": false,
+      "citation_url": "https://www.britannica.com/place/Alpha-Centauri"
+    },
+    {
+      "name": "Barnard's Star",
+      "description": "The second-closest star system and the fastest-moving star in Earth's sky. This ancient red dwarf is racing toward us at 140 km/s and will become our nearest neighbor in about 10,000 years.\n",
+      "distance_ly": 5.958,
+      "ra": 269.4523,
+      "dec": 4.6933,
+      "apparent_mag": 9.54,
+      "spectral_type": "M4Ve",
+      "has_planets": false,
+      "citation_url": "https://www.britannica.com/place/Barnards-Star"
+    },
+    {
+      "name": "Sirius",
+      "description": "The brightest star in the night sky. A young A-type main-sequence star twice as massive as the Sun, with a white dwarf companion (Sirius B). Ancient Egyptians used its heliacal rising to predict the Nile flood.\n",
+      "distance_ly": 8.583,
+      "ra": 101.2872,
+      "dec": -16.7161,
+      "apparent_mag": -1.46,
+      "spectral_type": "A1V",
+      "has_planets": false,
+      "citation_url": "https://www.britannica.com/place/Sirius-star"
+    },
+    {
+      "name": "Epsilon Eridani",
+      "description": "A young, Sun-like K-dwarf hosting a prominent debris disk — similar to our early solar system. A confirmed Jupiter-mass planet orbits it, making it one of the best SETI targets. Frank Drake pointed the first SETI telescope here in 1960 (Project Ozma).\n",
+      "distance_ly": 10.522,
+      "ra": 53.2328,
+      "dec": -9.4584,
+      "apparent_mag": 3.73,
+      "spectral_type": "K2V",
+      "has_planets": true,
+      "citation_url": "https://science.nasa.gov/missions/hubble/nasas-hubble-reveals-dynamic-weather-patterns-on-nearby-star/"
+    },
+    {
+      "name": "Lacaille 9352",
+      "description": "A relatively bright M-dwarf and one of the faster-moving nearby stars. Visible to the naked eye from southern latitudes, it is a stable red dwarf that has been observed since the 1800s.\n",
+      "distance_ly": 10.742,
+      "ra": 346.4692,
+      "dec": -35.8532,
+      "apparent_mag": 7.34,
+      "spectral_type": "M1.5Ve",
+      "has_planets": false,
+      "citation_url": "https://simbad.u-strasbg.fr/simbad/sim-id?Ident=Lacaille+9352"
+    },
+    {
+      "name": "61 Cygni A",
+      "description": "The first star (other than the Sun) to have its distance accurately measured — by Friedrich Bessel in 1838. This K-dwarf binary pair was also the subject of early exoplanet claims in the 1940s, now considered unconfirmed.\n",
+      "distance_ly": 11.408,
+      "ra": 316.7302,
+      "dec": 38.7494,
+      "apparent_mag": 5.2,
+      "spectral_type": "K5V",
+      "has_planets": false,
+      "citation_url": "https://www.britannica.com/place/61-Cygni"
+    },
+    {
+      "name": "Procyon",
+      "description": "The eighth-brightest star in the sky and one of the two stars in Canis Minor. An F-type subgiant accompanied by a white dwarf companion, Procyon will swell into a giant within 10–100 million years.\n",
+      "distance_ly": 11.46,
+      "ra": 114.8274,
+      "dec": 5.2278,
+      "apparent_mag": 0.34,
+      "spectral_type": "F5IV-V",
+      "has_planets": false,
+      "citation_url": "https://www.britannica.com/place/Procyon-star"
+    },
+    {
+      "name": "Epsilon Indi A",
+      "description": "A K-type star in the southern sky accompanied by a binary pair of brown dwarfs discovered in 2003. It is very similar in age to the Sun and has long been considered a SETI target.\n",
+      "distance_ly": 11.83,
+      "ra": 330.8403,
+      "dec": -56.7869,
+      "apparent_mag": 4.69,
+      "spectral_type": "K5V",
+      "has_planets": false,
+      "citation_url": "https://simbad.u-strasbg.fr/simbad/sim-id?Ident=eps+Ind"
+    },
+    {
+      "name": "Tau Ceti",
+      "description": "One of the Sun's nearest and most similar neighbors. A G-type star with 5 candidate planets, two of which lie in the habitable zone. One of Project Ozma's original targets in 1960, and a mainstay of science fiction as a location for human colonies.\n",
+      "distance_ly": 11.887,
+      "ra": 26.017,
+      "dec": -15.9375,
+      "apparent_mag": 3.5,
+      "spectral_type": "G8.5V",
+      "has_planets": true,
+      "citation_url": "https://exoplanets.nasa.gov/exoplanet-catalog/6865/tau-ceti-e/"
+    },
+    {
+      "name": "Kapteyn's Star",
+      "description": "A red dwarf racing through space at 293 km/s — the second-fastest moving star relative to the Sun. It originally belonged to the Omega Centauri globular cluster and was flung outward billions of years ago. At ~11.5 Gyr old, it's among the oldest nearby stars.\n",
+      "distance_ly": 12.76,
+      "ra": 77.0258,
+      "dec": -44.9858,
+      "apparent_mag": 8.85,
+      "spectral_type": "M1.5V",
+      "has_planets": false,
+      "citation_url": "https://simbad.u-strasbg.fr/simbad/sim-id?Ident=Kapteyn%27s+Star"
+    },
+    {
+      "name": "Wolf 1061",
+      "description": "An M-dwarf with three confirmed rocky planets, including Wolf 1061c — one of the closest potentially habitable exoplanets ever found. At just 14 LY away, it is a prime target for future direct-imaging telescopes.\n",
+      "distance_ly": 14.05,
+      "ra": 234.6143,
+      "dec": -12.5373,
+      "apparent_mag": 10.07,
+      "spectral_type": "M3V",
+      "has_planets": true,
+      "citation_url": "https://exoplanets.nasa.gov/exoplanet-catalog/2027/wolf-1061-c/"
+    },
+    {
+      "name": "40 Eridani A",
+      "description": "A K-dwarf orbiting with a white dwarf and a red dwarf companion. Science fiction fans know it as the proposed location of Vulcan, home planet of Mr. Spock — a designation canonized in Star Trek in 1991 and officially acknowledged by NASA.\n",
+      "distance_ly": 16.26,
+      "ra": 62.9754,
+      "dec": -7.6518,
+      "apparent_mag": 4.43,
+      "spectral_type": "K1V",
+      "has_planets": false,
+      "citation_url": "https://solarsystem.nasa.gov/news/news-detail/?id=9523"
+    },
+    {
+      "name": "70 Ophiuchi A",
+      "description": "A close binary K-dwarf system visible to the naked eye. In 1943, Kaj Strand controversially claimed a planet here — later refuted — making it one of the first exoplanet false alarms in history.\n",
+      "distance_ly": 16.61,
+      "ra": 261.3268,
+      "dec": 2.5006,
+      "apparent_mag": 4.03,
+      "spectral_type": "K0V",
+      "has_planets": false,
+      "citation_url": "https://simbad.u-strasbg.fr/simbad/sim-id?Ident=70+Oph"
+    },
+    {
+      "name": "Altair",
+      "description": "The 12th-brightest star in the sky and one of the three stars of the Summer Triangle. Altair rotates so rapidly (~286 km/s at equator) that it is visibly oblate — 20% wider at the equator than the poles.\n",
+      "distance_ly": 16.73,
+      "ra": 297.6958,
+      "dec": 8.8683,
+      "apparent_mag": 0.77,
+      "spectral_type": "A7V",
+      "has_planets": false,
+      "citation_url": "https://www.britannica.com/place/Altair-star"
+    },
+    {
+      "name": "Sigma Draconis",
+      "description": "A K-type main-sequence star slightly smaller and cooler than the Sun, one of the most-studied nearby stars for SETI. It appeared on the famous \"Wow! signal\" follow-up target list.\n",
+      "distance_ly": 18.77,
+      "ra": 279.527,
+      "dec": 69.6611,
+      "apparent_mag": 4.68,
+      "spectral_type": "K0V",
+      "has_planets": false,
+      "citation_url": "https://simbad.u-strasbg.fr/simbad/sim-id?Ident=sig+Dra"
+    },
+    {
+      "name": "Eta Cassiopeiae A",
+      "description": "An F-type star in a wide binary with an M-dwarf companion, 19 LY away. It is slightly more massive and luminous than the Sun, making it a frequent target in discussions of nearby Sun-like stars.\n",
+      "distance_ly": 19.42,
+      "ra": 12.2769,
+      "dec": 57.8155,
+      "apparent_mag": 3.44,
+      "spectral_type": "F9V",
+      "has_planets": false,
+      "citation_url": "https://simbad.u-strasbg.fr/simbad/sim-id?Ident=eta+Cas"
+    },
+    {
+      "name": "Delta Pavonis",
+      "description": "One of the nearest and most Sun-like stars in the sky: a G-type subgiant about 2 billion years older than the Sun. Often cited as one of the best SETI targets in the southern sky.\n",
+      "distance_ly": 19.92,
+      "ra": 295.4514,
+      "dec": -66.1779,
+      "apparent_mag": 3.56,
+      "spectral_type": "G8IV",
+      "has_planets": false,
+      "citation_url": "https://simbad.u-strasbg.fr/simbad/sim-id?Ident=del+Pav"
+    },
+    {
+      "name": "82 Eridani",
+      "description": "A quiet, Sun-like G-dwarf about 6 billion years old and slightly less massive than our Sun. Considered one of the better candidates for harboring Earth-like planets; examined in several SETI surveys.\n",
+      "distance_ly": 20.27,
+      "ra": 47.9943,
+      "dec": -43.07,
+      "apparent_mag": 4.27,
+      "spectral_type": "G5V",
+      "has_planets": false,
+      "citation_url": "https://simbad.u-strasbg.fr/simbad/sim-id?Ident=82+Eri"
+    },
+    {
+      "name": "Beta Hydri",
+      "description": "The closest subgiant star to Earth — a solar analog entering its late main-sequence phase. Located in the southern sky near the Small Magellanic Cloud, it is one of the brightest stars in its region.\n",
+      "distance_ly": 24.33,
+      "ra": 6.4374,
+      "dec": -77.2552,
+      "apparent_mag": 2.8,
+      "spectral_type": "G2IV",
+      "has_planets": false,
+      "citation_url": "https://simbad.u-strasbg.fr/simbad/sim-id?Ident=bet+Hyi"
+    },
+    {
+      "name": "Vega",
+      "description": "The 5th-brightest star and a cornerstone of modern astronomy — the standard against which stellar brightnesses are measured. It was Earth's pole star 14,000 years ago and will be again around 13,727 CE. Its dust ring may hide an unseen planetary system.\n",
+      "distance_ly": 25.04,
+      "ra": 279.2347,
+      "dec": 38.7837,
+      "apparent_mag": 0.03,
+      "spectral_type": "A0Va",
+      "has_planets": false,
+      "citation_url": "https://www.britannica.com/place/Vega-star"
+    },
+    {
+      "name": "Fomalhaut",
+      "description": "An A-type star with one of the most visually striking debris disks in the sky, imaged directly by Hubble in 2008. A controversial exoplanet candidate (Fomalhaut b) was later reinterpreted as a cloud from a collision between two large bodies.\n",
+      "distance_ly": 25.13,
+      "ra": 344.4127,
+      "dec": -29.6222,
+      "apparent_mag": 1.16,
+      "spectral_type": "A3V",
+      "has_planets": false,
+      "citation_url": "https://hubblesite.org/contents/news-releases/2008/news-2008-39"
+    },
+    {
+      "name": "Pi3 Orionis",
+      "description": "The brightest star in the \"shield\" of Orion and a near-twin of the Sun — same spectral type, similar mass and age. At 26 LY, it is one of the closest Solar analogs, occasionally studied for SETI.\n",
+      "distance_ly": 26.32,
+      "ra": 72.46,
+      "dec": 6.9614,
+      "apparent_mag": 3.19,
+      "spectral_type": "F6V",
+      "has_planets": false,
+      "citation_url": "https://simbad.u-strasbg.fr/simbad/sim-id?Ident=pi3+Ori"
+    },
+    {
+      "name": "Gamma Leporis",
+      "description": "A nearby F-type star considered one of the best candidates in the northern/equatorial sky for hosting habitable planets. Examined in Project Phoenix SETI observations; no signals detected.\n",
+      "distance_ly": 29.3,
+      "ra": 87.2567,
+      "dec": -22.4491,
+      "apparent_mag": 3.59,
+      "spectral_type": "F6V",
+      "has_planets": false,
+      "citation_url": "https://simbad.u-strasbg.fr/simbad/sim-id?Ident=gam+Lep"
+    },
+    {
+      "name": "Pollux",
+      "description": "The closest giant star to Earth and the brightest star in Gemini. In 2006, a Jupiter-mass planet (Pollux b / Thestias) was confirmed in orbit — making Pollux the nearest giant star known to host a planet.\n",
+      "distance_ly": 33.78,
+      "ra": 116.3289,
+      "dec": 28.0262,
+      "apparent_mag": 1.14,
+      "spectral_type": "K0III",
+      "has_planets": true,
+      "citation_url": "https://exoplanets.nasa.gov/exoplanet-catalog/384/pollux-b/"
+    },
+    {
+      "name": "Denebola",
+      "description": "The second-brightest star in Leo, marking the lion's tail. A young A-type star (~400 Myr) slightly more massive than Sirius, with an infrared excess suggesting a warm debris disk.\n",
+      "distance_ly": 35.9,
+      "ra": 177.2648,
+      "dec": 14.5724,
+      "apparent_mag": 2.14,
+      "spectral_type": "A3V",
+      "has_planets": false,
+      "citation_url": "https://simbad.u-strasbg.fr/simbad/sim-id?Ident=bet+Leo"
+    },
+    {
+      "name": "Arcturus",
+      "description": "The fourth-brightest star in the sky and the brightest in the northern celestial hemisphere. An aging K-giant racing through the Milky Way at 122 km/s — it will leave our solar neighborhood in a few thousand years. Its light powered the 1933 Chicago World's Fair.\n",
+      "distance_ly": 36.66,
+      "ra": 213.9153,
+      "dec": 19.1824,
+      "apparent_mag": -0.05,
+      "spectral_type": "K1.5IIIpe",
+      "has_planets": false,
+      "citation_url": "https://www.britannica.com/place/Arcturus"
+    }
+  ]
+}
